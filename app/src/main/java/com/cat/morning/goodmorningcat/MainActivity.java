@@ -80,6 +80,8 @@ public class MainActivity extends AppCompatActivity {
         } else if (id == R.id.action_profile) {
             Intent intent = new Intent(this, CatProfileActivity.class);
             startActivity(intent);
+        } else if (id == R.id.action_home) {
+            return true;
         }
 
         return super.onOptionsItemSelected(item);

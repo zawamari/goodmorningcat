@@ -14,7 +14,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import com.cat.morning.goodmorningcat.test.TestTapActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -82,6 +82,9 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         } else if (id == R.id.action_home) {
             return true;
+        } else if ( id == R.id.test_tap) {
+            Intent intent = new Intent(this, TestTapActivity.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);

@@ -85,6 +85,12 @@ public class MainActivity extends AppCompatActivity {
         } else if ( id == R.id.test_tap) {
             Intent intent = new Intent(this, TestTapActivity.class);
             startActivity(intent);
+        } else if ( id == R.id.test_shake) {
+            Intent intent = new Intent(this, TestTapActivity.class);
+            startActivity(intent);
+        } else if ( id == R.id.test_tap) {
+            Intent intent = new Intent(this, TestTapActivity.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);

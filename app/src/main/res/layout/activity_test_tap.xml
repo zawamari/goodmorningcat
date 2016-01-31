@@ -4,4 +4,58 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:id="@+id/tvTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:layout_gravity="center_horizontal"
+        android:text="7:00"
+        android:textStyle="bold"
+        android:textSize="50sp"/>
+
+    <ImageView
+        android:id="@+id/ivClearImage"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center_horizontal"
+        android:src="@mipmap/taro"/>
+
+    <TextView
+        android:id="@+id/tvMission"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:layout_gravity="center_horizontal"
+        android:text="肉球をさわって怒られうよう！"
+        android:textSize="20sp"/>
+
+    <Button
+        android:id="@+id/btTap"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/shape_nikukyuu_test"
+        android:text="tap it!"/>
+
+
+    <TextView
+        android:id="@+id/tvCounter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="0"
+        android:textSize="20sp"/>
+
+    <TextView
+        android:id="@+id/tvClear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:layout_gravity="center_horizontal"
+        android:text="CLEAR!!"
+        android:textSize="20sp"/>
+
+
+
 </LinearLayout>

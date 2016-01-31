@@ -25,4 +25,10 @@
         android:orderInCategory="110"
         android:title="test tap"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/test_shake"
+        android:orderInCategory="110"
+        android:title="test shake"
+        app:showAsAction="never" />
 </menu>

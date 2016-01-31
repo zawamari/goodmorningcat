@@ -25,7 +25,7 @@ public class CatProfileActivity extends AppCompatActivity {
         mSoundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
         mSoundId = mSoundPool.load(getApplicationContext(), R.raw.cat1, 0);
         mSoundIdKittin = mSoundPool.load(getApplicationContext(), R.raw.cat2, 0);
-        mSoundIdUnari = mSoundPool.load(getApplicationContext(), R.raw.cat2, 0);
+        mSoundIdUnari = mSoundPool.load(getApplicationContext(), R.raw.cat_unari, 0);
     }
 
     @Override

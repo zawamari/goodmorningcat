@@ -19,13 +19,16 @@ public class TestTapActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_tap);
 
+        final TextView tvCounter = (TextView)findViewById(R.id.tvCounter);
+
         ((Button)findViewById(R.id.btTap)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TextView tvCounter = (TextView)findViewById(R.id.tvCounter);
 
                 int count = Integer.parseInt(tvCounter.getText().toString());
+                count = count + 1;
                 tvCounter.setText(Integer.toString(count + 1));
+
 
                 if (count > 20) {
                     ((TextView)findViewById(R.id.tvClear)).setVisibility(View.VISIBLE);

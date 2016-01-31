@@ -28,7 +28,13 @@
 
     <item
         android:id="@+id/test_shake"
-        android:orderInCategory="110"
+        android:orderInCategory="111"
         android:title="test shake"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/test_swipe"
+        android:orderInCategory="112"
+        android:title="test swipe"
         app:showAsAction="never" />
 </menu>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <ImageView
+            android:id="@+id/ivCatImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@mipmap/dark_cat"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_centerHorizontal="true"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:text="頭を撫でてご機嫌にして差し上げなさい"
+            android:textColor="@color/white"/>
+
+        <TextView
+            android:id="@+id/tvClear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CLEAR!!!"
+            android:textColor="@color/white"
+            android:textSize="40sp"
+            android:visibility="gone"
+            android:layout_centerInParent="true"/>
+
+
+        <ProgressBar
+            android:id="@+id/ProgressBar01"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_alignParentBottom="true"
+            android:max="180000"
+            style="?android:attr/progressBarStyleHorizontal">
+        </ProgressBar>
+
+
+        <ImageView
+            android:id="@+id/ivHand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/hand"/>
+
+    </RelativeLayout>
+
+</LinearLayout>

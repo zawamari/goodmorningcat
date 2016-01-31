@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.cat.morning.goodmorningcat.test.TestSwipeActivity;
 import com.cat.morning.goodmorningcat.test.TestTapActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -88,8 +89,8 @@ public class MainActivity extends AppCompatActivity {
         } else if ( id == R.id.test_shake) {
             Intent intent = new Intent(this, TestTapActivity.class);
             startActivity(intent);
-        } else if ( id == R.id.test_tap) {
-            Intent intent = new Intent(this, TestTapActivity.class);
+        } else if ( id == R.id.test_swipe) {
+            Intent intent = new Intent(this, TestSwipeActivity.class);
             startActivity(intent);
         }
 

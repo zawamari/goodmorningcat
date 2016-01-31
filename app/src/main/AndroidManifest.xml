@@ -33,6 +33,10 @@
             android:label="GoodMorningCat"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
+        <activity android:name=".test.TestSwipeActivity"
+            android:label="GoodMorningCat"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>

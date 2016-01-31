@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.cat.morning.goodmorningcat.test.TestShakeActivity;
 import com.cat.morning.goodmorningcat.test.TestSwipeActivity;
 import com.cat.morning.goodmorningcat.test.TestTapActivity;
 
@@ -87,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, TestTapActivity.class);
             startActivity(intent);
         } else if ( id == R.id.test_shake) {
-            Intent intent = new Intent(this, TestTapActivity.class);
+            Intent intent = new Intent(this, TestShakeActivity.class);
             startActivity(intent);
         } else if ( id == R.id.test_swipe) {
             Intent intent = new Intent(this, TestSwipeActivity.class);

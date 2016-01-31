@@ -2,6 +2,7 @@ package com.cat.morning.goodmorningcat.test;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -9,89 +10,40 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.cat.morning.goodmorningcat.MainActivity;
 import com.cat.morning.goodmorningcat.R;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by imarie on 16/01/31.
  */
 public class TestShakeActivity extends Activity implements SensorEventListener {
-    //センサーマネージャー
-    private SensorManager mSensorManager;
-    private Sensor mAccelerometerSensor;
-    Float b_value;
-    Long b_time;
+    private SensorManager manager;
+    private TextView values;
 
+    private int totalCount;
+    private ProgressBar pb;
+
+        /** Called when the activity is first created. */
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_shake);
 
-        // センサーマネージャを獲得する
-        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        values = (TextView)findViewById(R.id.value_id);
+        manager = (SensorManager)getSystemService(SENSOR_SERVICE);
 
-        // マネージャから加速度センサーオブジェクトを取得
-        mAccelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-    }
-
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        //To change body of implemented methods use File | Settings | File Templates.
-        // 加速度センサの場合、以下の処理を実行
-        if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            StringBuilder builder = new StringBuilder();
-
-            // 数値の単位はm/s^2
-            // X軸
-            float x = event.values[0];
-            // Y軸
-            float y = event.values[1];
-            // Z軸
-            float z = event.values[2];
-
-
-            Float c_value = event.values[0] + event.values[1];
-            Long c_time = System.currentTimeMillis();
-
-//            これ↓エラーに成る。
-//            b_value = c_value + b_value;
-
-//            if (b_value > 1000) {
-//                Float speed = Math.abs(c_value - b_value) / diff * 1000;
-//                if (speed > 30){
-//                    Toast.makeText(TestShakeActivity.this, "シェイク",Toast.LENGTH_LONG).show();
-//                }
-//                b_time = c_time;
-//                b_value = c_value;
-//            }
-            builder.append("X : " + (b_value) + "\n");
-
-        }
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        // 200msに一度SensorEventを観測するリスナを登録
-        mSensorManager.registerListener(this, mAccelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        // 非アクティブ時にSensorEventをとらないようにリスナの登録解除
-        mSensorManager.unregisterListener(this);
+        pb = (ProgressBar)findViewById(R.id.ProgressBar01);
     }
 
     @Override
@@ -99,7 +51,58 @@ public class TestShakeActivity extends Activity implements SensorEventListener {
         // TODO Auto-generated method stub
         super.onStop();
         // Listenerの登録解除
-        mSensorManager.unregisterListener(this);
+        manager.unregisterListener(this);
     }
 
+    @Override
+    protected void onResume() {
+        // TODO Auto-generated method stub
+        super.onResume();
+        // Listenerの登録
+        List<Sensor> sensors = manager.getSensorList(Sensor.TYPE_ACCELEROMETER);
+        if(sensors.size() > 0) {
+            Sensor s = sensors.get(0);
+            manager.registerListener(this, s, SensorManager.SENSOR_DELAY_UI);
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        // TODO Auto-generated method stub
+        if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            String str = "加速度センサー値:"
+            + "\nX軸:" + event.values[SensorManager.DATA_X]
+            + "\nY軸:" + event.values[SensorManager.DATA_Y]
+            + "\nZ軸:" + event.values[SensorManager.DATA_Z];
+            values.setText(str);
+        }
+
+        if ((int)event.values[SensorManager.DATA_X] > 0) { // 0以上だったら加算する
+            totalCount += (int) event.values[SensorManager.DATA_X];
+            pb.setProgress(totalCount);
+
+            if (totalCount > 1500) {
+                manager.unregisterListener(this);
+                ((TextView)findViewById(R.id.tvClear)).setVisibility(View.VISIBLE);
+
+                TimerTask task = new TimerTask() {
+                    public void run() {
+                        Intent intent = new Intent(TestShakeActivity.this, MainActivity.class);
+                        startActivityForResult(intent, 0);
+                        TestShakeActivity.this.finish();
+                    }
+                };
+
+                Timer timer = new Timer();
+                timer.schedule(task, 3000); // 1秒後にTOPに戻る
+
+            }
+        }
+        Log.d("test", Integer.toString(totalCount));
+    }
 }

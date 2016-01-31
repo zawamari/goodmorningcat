@@ -42,8 +42,6 @@ public class TestSwipeActivity extends Activity {
 
             private int totalMove;
 
-
-
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
@@ -61,6 +59,7 @@ public class TestSwipeActivity extends Activity {
                     return true;
                 } else if( event.getAction() == MotionEvent.ACTION_MOVE){
 
+                    // TODO:この値だけ取得すると、タップして最初に左に移動したらマイナスの値になるので修正必要。
                     param.leftMargin = downLeftMargin + (int)(event.getRawX() - downX);
                     param.topMargin = downTopMargin + (int)(event.getRawY() - downY);
 
@@ -79,6 +78,7 @@ public class TestSwipeActivity extends Activity {
                             public void run() {
                                 Intent intent = new Intent(TestSwipeActivity.this, MainActivity.class);
                                 startActivityForResult(intent, 0);
+                                TestSwipeActivity.this.finish();
                             }
                         };
 
@@ -89,8 +89,6 @@ public class TestSwipeActivity extends Activity {
 
                     Log.d("test TotalMove", Integer.toString(totalMove));
 
-
-
                     return true;
                 }
 
@@ -98,7 +96,6 @@ public class TestSwipeActivity extends Activity {
             }
         };
 
-        // 別々のViewに、同じリスナをセットしておく
         findViewById(R.id.ivHand).setOnTouchListener(moving);
     }
 

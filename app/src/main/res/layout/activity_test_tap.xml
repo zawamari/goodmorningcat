@@ -54,7 +54,8 @@
         android:layout_margin="20dp"
         android:layout_gravity="center_horizontal"
         android:text="CLEAR!!"
-        android:textSize="20sp"/>
+        android:visibility="gone"
+        android:textSize="40sp"/>
 
 
 

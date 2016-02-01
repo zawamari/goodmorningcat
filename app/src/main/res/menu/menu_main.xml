@@ -37,4 +37,10 @@
         android:orderInCategory="112"
         android:title="test swipe"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/test_fling"
+        android:orderInCategory="113"
+        android:title="test fling"
+        app:showAsAction="never" />
 </menu>

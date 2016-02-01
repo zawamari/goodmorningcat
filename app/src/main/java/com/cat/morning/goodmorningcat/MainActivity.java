@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.cat.morning.goodmorningcat.test.TestFlingActivity;
 import com.cat.morning.goodmorningcat.test.TestShakeActivity;
 import com.cat.morning.goodmorningcat.test.TestSwipeActivity;
 import com.cat.morning.goodmorningcat.test.TestTapActivity;
@@ -92,6 +93,9 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         } else if ( id == R.id.test_swipe) {
             Intent intent = new Intent(this, TestSwipeActivity.class);
+            startActivity(intent);
+        } else if ( id == R.id.test_fling) {
+            Intent intent = new Intent(this, TestFlingActivity.class);
             startActivity(intent);
         }
 

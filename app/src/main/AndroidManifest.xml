@@ -19,11 +19,11 @@
         </activity>
         <activity android:name=".CatProfileActivity"
             android:label="GoodMorningCat"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme">
         </activity>
         <activity android:name=".AlertSettingActivity"
             android:label="GoodMorningCat"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme">
         </activity>
         <activity android:name=".test.TestTapActivity"
             android:label="GoodMorningCat"

@@ -33,19 +33,19 @@ public class CatProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cat_profile);
 
-        ((ImageView)findViewById(R.id.ivSpeaker1)).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.ivSpeaker1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mSoundPool.play(mSoundId, 1.0F, 1.0F, 0, 0, 1.0F);
             }
         });
-        ((ImageView)findViewById(R.id.ivSpeaker2)).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.ivSpeaker2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mSoundPool.play(mSoundIdKittin, 1.0F, 1.0F, 0, 0, 1.0F);
             }
         });
-        ((ImageView)findViewById(R.id.ivSpeaker3)).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.ivSpeaker3).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mSoundPool.play(mSoundIdUnari, 1.0F, 1.0F, 0, 0, 1.0F);

@@ -72,7 +72,7 @@ public class TestSwipeActivity extends Activity {
                     pb.setProgress(totalMove);
 
                     if (totalMove > 180000) {
-                        ((TextView)findViewById(R.id.tvClear)).setVisibility(View.VISIBLE);
+                        findViewById(R.id.tvClear).setVisibility(View.VISIBLE);
 
                         TimerTask task = new TimerTask() {
                             public void run() {

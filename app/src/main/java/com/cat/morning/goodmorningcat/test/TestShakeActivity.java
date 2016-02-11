@@ -88,7 +88,7 @@ public class TestShakeActivity extends Activity implements SensorEventListener {
 
             if (totalCount > 1500) {
                 manager.unregisterListener(this);
-                ((TextView)findViewById(R.id.tvClear)).setVisibility(View.VISIBLE);
+                findViewById(R.id.tvClear).setVisibility(View.VISIBLE);
 
                 TimerTask task = new TimerTask() {
                     public void run() {

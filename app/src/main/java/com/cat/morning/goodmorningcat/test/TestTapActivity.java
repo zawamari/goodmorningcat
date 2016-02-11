@@ -26,7 +26,7 @@ public class TestTapActivity extends AppCompatActivity {
 
         final TextView tvCounter = (TextView)findViewById(R.id.tvCounter);
 
-        ((Button)findViewById(R.id.btTap)).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.btTap).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -35,8 +35,8 @@ public class TestTapActivity extends AppCompatActivity {
 
 
                 if (count > 20) {
-                    ((TextView) findViewById(R.id.tvClear)).setVisibility(View.VISIBLE);
-                    ((ImageView) findViewById(R.id.ivClearImage)).setVisibility(View.VISIBLE);
+                    findViewById(R.id.tvClear).setVisibility(View.VISIBLE);
+                    findViewById(R.id.ivClearImage).setVisibility(View.VISIBLE);
 
                     TimerTask task = new TimerTask() {
                         public void run() {

@@ -220,6 +220,8 @@
             android:layout_weight="1"
             android:layout_margin="10dp"
             android:gravity="center"
+            android:background="@drawable/shape_button_brown"
+            android:textColor="@color/white"
             android:text="クリア"/>
 
         <TextView
@@ -228,6 +230,8 @@
             android:layout_weight="1"
             android:layout_margin="10dp"
             android:gravity="center"
+            android:background="@drawable/shape_button_orange"
+            android:textColor="@color/white"
             android:text="設定"/>
 
     </LinearLayout>

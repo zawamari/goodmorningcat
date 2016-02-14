@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.cat.morning.goodmorningcat">
 
+
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/cat"
@@ -41,6 +45,8 @@
             android:label="GoodMorningCat"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
+        <receiver android:name=".AlarmBroadcastReceiver"
+            android:process=":remote" />
     </application>
 
 </manifest>

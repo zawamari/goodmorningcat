@@ -1,11 +1,14 @@
 package com.cat.morning.goodmorningcat;
 
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -49,6 +52,13 @@ public class AlertSettingActivity extends AppCompatActivity {
         });
 
 
+        ((TextView)findViewById(R.id.tvSet)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Snackbar.make(((LinearLayout)findViewById(R.id.llView)), "Test アラームセット完了。", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
 
     }
 

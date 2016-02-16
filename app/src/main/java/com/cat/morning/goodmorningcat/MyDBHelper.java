@@ -9,10 +9,19 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class MyDBHelper extends SQLiteOpenHelper {
 
+    private static MyDBHelper mInstance = null;
+
     // コンストラクタ
     public MyDBHelper( Context context ){
         // 任意のデータベースファイル名と、バージョンを指定する
         super( context, "catAlerm.db", null, 1 );
+    }
+
+    public static synchronized MyDBHelper getInstance(Context context) {
+        if (mInstance == null) {
+            mInstance = new MyDBHelper(context);
+        }
+        return mInstance;
     }
 
 
@@ -20,12 +29,26 @@ public class MyDBHelper extends SQLiteOpenHelper {
     public void onCreate( SQLiteDatabase db ) {
         // テーブルを作成。SQLの文法は通常のSQLiteと同様
         db.execSQL(
-                "create table alert_set_table ("
-                        + "id  integer primary key autoincrement not null, "
-                        + "week text not null, "
-                        + "time  text not null, "
-                        + "cat_type integer not null");
-        // 必要なら、ここで他のテーブルを作成したり、初期データを挿入したりする
+                "CREATE TABLE alert_set_table ("
+                        + "id  INTEGER PRIMARY KEY AUTOINCREMENT , "
+                        + "week TEXT, "
+                        + "time TEXT, "
+                        + "cat_type INTEGER,"
+                        + "status INTEGER)");
+        // status 0:有効 1:無効
+
+        db.execSQL(
+                "CREATE TABLE cat ("
+                        + "id  INTEGER PRIMARY KEY AUTOINCREMENT , "
+                        + "name TEXT, "
+                        + "status INTEGER DEFAULT '0')");
+        // status 0:有効 1:無効
+
+        db.execSQL("INSERT INTO cat (name, status) VALUES ('太郎', 0)" );
+        db.execSQL("INSERT INTO cat (name, status) VALUES ('ザビエル', 0)" );
+        db.execSQL("INSERT INTO cat (name, status) VALUES ('みけこ', 0)" );
+        db.execSQL("INSERT INTO cat (name, status) VALUES ('マイケル', 0)" );
+
     }
 
 

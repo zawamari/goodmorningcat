@@ -55,13 +55,18 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/llCallList"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="wrap_content">
 
-        </LinearLayout>
+            <LinearLayout
+                android:id="@+id/llCallList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+            </LinearLayout>
+
+        </ScrollView>
 
     </LinearLayout>
 

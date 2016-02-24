@@ -1,6 +1,11 @@
 package com.cat.morning.goodmorningcat;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +27,9 @@ import java.util.Calendar;
  * Created by imarie on 16/01/24.
  */
 public class AlertSettingActivity extends AppCompatActivity {
+
+    private static final int bid2 = 2;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,7 +132,37 @@ public class AlertSettingActivity extends AppCompatActivity {
                 Snackbar.make(((LinearLayout) findViewById(R.id.llView)), "Test アラームセット完了。", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 
+                // DBに登録する
 
+                SQLiteDatabase db = MyDBHelper.getInstance(AlertSettingActivity.this).getWritableDatabase();
+
+                String etTime = ((EditText)findViewById(R.id.etTime)).getText().toString();
+
+
+                db.execSQL("INSERT INTO alert_set_table (week,time,cat_type, status) VALUES ('火曜',?, 1, 1)", new String[] {etTime});
+
+                Cursor cs = db.rawQuery("SELECT * FROM alert_set_table ", null);
+
+                Log.d("test count is ", Integer.toString(cs.getCount()));
+
+
+                /*  アラート登録時はONの状態なので、アラートをセットする。 */
+                Calendar calendar = Calendar.getInstance();
+                String[] time = etTime.split(":", 0);
+
+                calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(time[0]));
+                calendar.set(Calendar.MINUTE, Integer.parseInt(time[1]));
+
+                Intent intent = new Intent(getApplicationContext(), AlarmBroadcastReceiver.class);
+                intent.putExtra("intentId", 2);
+                PendingIntent pending = PendingIntent.getBroadcast(getApplicationContext(), bid2, intent, 0);
+
+                // アラームをセットする
+                AlarmManager am = (AlarmManager)AlertSettingActivity.this.getSystemService(ALARM_SERVICE);
+                am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pending);
+
+                Intent homeIntent = new Intent(AlertSettingActivity.this, MainActivity.class);
+                startActivityForResult(homeIntent, 0);
 
             }
         });

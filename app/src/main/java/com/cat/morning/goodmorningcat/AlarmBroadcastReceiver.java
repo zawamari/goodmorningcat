@@ -39,9 +39,9 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
                 .setWhen(System.currentTimeMillis())
                 .setContentTitle("TestAlarm")
                 .setContentText("時間になりました")
-                        // 音、バイブレート、LEDで通知
+                // 音、バイブレート、LEDで通知
                 .setDefaults(Notification.DEFAULT_ALL)
-                        // 通知をタップした時にMainActivityを立ち上げる
+                // 通知をタップした時にMainActivityを立ち上げる
                 .setContentIntent(pendingIntent)
                 .build();
 

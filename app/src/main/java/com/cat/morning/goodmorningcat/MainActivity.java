@@ -36,7 +36,6 @@ import java.util.Calendar;
 public class MainActivity extends AppCompatActivity {
 
     private static final int bid1 = 1;
-    private static final int bid2 = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,38 +133,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Calendar calendar = Calendar.getInstance();
-                calendar.set(Calendar.YEAR, 2016);
-                calendar.set(Calendar.MONTH, 1);// 7=>8月 Calendar.MONTH は0から始まる
-                calendar.set(Calendar.DATE, 15);
-                calendar.set(Calendar.HOUR_OF_DAY, 8);
-                calendar.set(Calendar.MINUTE, 40 );
-                calendar.set(Calendar.SECOND, 0);
-                calendar.set(Calendar.MILLISECOND, 0);
+                Intent intent = new Intent(MainActivity.this, AlertSettingActivity.class);
+                startActivityForResult(intent, 0);
 
-                Intent intent = new Intent(getApplicationContext(), AlarmBroadcastReceiver.class);
-                intent.putExtra("intentId", 2);
-                PendingIntent pending = PendingIntent.getBroadcast(getApplicationContext(), bid2, intent, 0);
-
-                // アラームをセットする
-                AlarmManager am = (AlarmManager)MainActivity.this.getSystemService(ALARM_SERVICE);
-                am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pending);
-
-                Toast.makeText(getApplicationContext(), "Set Alarm ", Toast.LENGTH_SHORT).show();
-
-
-                SQLiteDatabase db = MyDBHelper.getInstance(MainActivity.this).getWritableDatabase();
-
-                db.execSQL("INSERT INTO alert_set_table (week,time,cat_type, status) VALUES ('火曜','08:30', 1, 1)");
-
-
-
-                Cursor cs = db.rawQuery("SELECT * FROM alert_set_table ", null);
-
-                Log.d("test count is ", Integer.toString(cs.getCount()));
-
-                Snackbar.make(view, "Test アラームセット完了。", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
             }
         });
 

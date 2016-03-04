@@ -27,18 +27,17 @@ public class MyDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate( SQLiteDatabase db ) {
-        // テーブルを作成。SQLの文法は通常のSQLiteと同様
         db.execSQL(
-                "CREATE TABLE alert_set_table ("
+                "CREATE TABLE IF NOT EXISTS alert_set_table ("
                         + "id  INTEGER PRIMARY KEY AUTOINCREMENT , "
-                        + "week TEXT, "
-                        + "time TEXT, "
-                        + "cat_type INTEGER,"
-                        + "status INTEGER)");
-        // status 0:有効 1:無効
+                        + "week BLOB NOT NULL, " // 曜日
+                        + "time TEXT NOT NULL, "          // 時間
+                        + "vibrate INTEGER NOT NULL, " // バイブレーション
+                        + "cat_type INTEGER NOT NULL,"
+                        + "status INTEGER NOT NULL)");// status 0:有効 1:無効
 
         db.execSQL(
-                "CREATE TABLE cat ("
+                "CREATE TABLE IF NOT EXISTS cat ("
                         + "id  INTEGER PRIMARY KEY AUTOINCREMENT , "
                         + "name TEXT, "
                         + "status INTEGER DEFAULT '0')");
@@ -58,6 +57,7 @@ public class MyDBHelper extends SQLiteOpenHelper {
      */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // 取りあえず、空実装でよい
+        db.execSQL("DROP TABLE IF EXISTS alert_set_table");
+        onCreate(db);
     }
 }

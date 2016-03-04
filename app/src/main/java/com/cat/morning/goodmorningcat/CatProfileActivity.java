@@ -36,7 +36,14 @@ public class CatProfileActivity extends AppCompatActivity {
         findViewById(R.id.ivSpeaker1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mSoundPool.play(mSoundId, 1.0F, 1.0F, 0, 0, 1.0F);
+                mSoundPool.play(
+                        mSoundId,// 再生したいファイルをloadした時の戻り値,
+                        1.0F,    // 左のスピーカーからの再生音量。(0.0〜1.0)
+                        1.0F,    // 右のスピーカーからの再生音量。(0.0〜1.0)
+                        0,       // プライオリティ（0が一番優先度が高い）
+                        0,       // ループ回数（-1の場合は無限にループ、0の場合はループしない）
+                        1.0F     // 再生速度（0.5〜2.0：0.5倍から2倍の速度まで設定できる）
+                );
             }
         });
         findViewById(R.id.ivSpeaker2).setOnClickListener(new View.OnClickListener() {

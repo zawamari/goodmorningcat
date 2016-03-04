@@ -2,6 +2,8 @@ package com.cat.morning.goodmorningcat.test;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -31,6 +33,18 @@ public class TestSwipeActivity extends Activity {
         setContentView(R.layout.activity_test_swipe);
 
         pb = (ProgressBar)findViewById(R.id.ProgressBar01);
+
+        // 音をならす
+        final SoundPool mSoundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
+        final int mSoundId = mSoundPool.load(getApplicationContext(), R.raw.cat1, 0);
+        mSoundPool.play(
+                mSoundId,// 再生したいファイルをloadした時の戻り値,
+                1.0F,    // 左のスピーカーからの再生音量。(0.0〜1.0)
+                1.0F,    // 右のスピーカーからの再生音量。(0.0〜1.0)
+                0,       // プライオリティ（0が一番優先度が高い）
+                -1,       // ループ回数（-1の場合は無限にループ、0の場合はループしない）
+                1.0F     // 再生速度（0.5〜2.0：0.5倍から2倍の速度まで設定できる）
+        );
 
         final View.OnTouchListener moving = new View.OnTouchListener() {
 
@@ -72,6 +86,7 @@ public class TestSwipeActivity extends Activity {
                     pb.setProgress(totalMove);
 
                     if (totalMove > 180000) {
+                        mSoundPool.stop(mSoundId);
                         findViewById(R.id.tvClear).setVisibility(View.VISIBLE);
 
                         TimerTask task = new TimerTask() {
@@ -99,5 +114,6 @@ public class TestSwipeActivity extends Activity {
         findViewById(R.id.ivHand).setOnTouchListener(moving);
     }
 
+    // TODO:backボタンを無効にする
 
 }

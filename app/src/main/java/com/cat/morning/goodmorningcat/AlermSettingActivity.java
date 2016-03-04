@@ -20,13 +20,12 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 
 /**
  * Created by imarie on 16/01/24.
  */
-public class AlertSettingActivity extends AppCompatActivity {
+public class AlermSettingActivity extends AppCompatActivity {
 
     private static final int bid2 = 2;
 
@@ -34,7 +33,7 @@ public class AlertSettingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_alert_setting);
+        setContentView(R.layout.activity_alerm_setting);
 
 
         /*
@@ -110,7 +109,7 @@ public class AlertSettingActivity extends AppCompatActivity {
                 Calendar calendar = Calendar.getInstance();
                 int hour = calendar.get(Calendar.HOUR_OF_DAY);
                 int minute = calendar.get(Calendar.MINUTE);
-                new TimePickerDialog(AlertSettingActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                new TimePickerDialog(AlermSettingActivity.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                         // 時間が設定されたときの処理
@@ -134,7 +133,7 @@ public class AlertSettingActivity extends AppCompatActivity {
 
                 // DBに登録する
 
-                SQLiteDatabase db = MyDBHelper.getInstance(AlertSettingActivity.this).getWritableDatabase();
+                SQLiteDatabase db = MyDBHelper.getInstance(AlermSettingActivity.this).getWritableDatabase();
 
                 String etTime = ((EditText)findViewById(R.id.etTime)).getText().toString();
 
@@ -150,18 +149,26 @@ public class AlertSettingActivity extends AppCompatActivity {
                 Calendar calendar = Calendar.getInstance();
                 String[] time = etTime.split(":", 0);
 
-                calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(time[0]));
-                calendar.set(Calendar.MINUTE, Integer.parseInt(time[1]));
+//                calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(time[0]));
+//                calendar.set(Calendar.MINUTE, Integer.parseInt(time[1]));
+
+                // Calendarを使って現在の時間をミリ秒で取得
+                calendar.setTimeInMillis(System.currentTimeMillis());
+                // 5秒後に設定
+                calendar.add(Calendar.SECOND, 5);
 
                 Intent intent = new Intent(getApplicationContext(), AlarmBroadcastReceiver.class);
                 intent.putExtra("intentId", 2);
-                PendingIntent pending = PendingIntent.getBroadcast(getApplicationContext(), bid2, intent, 0);
+                PendingIntent pending = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
 
                 // アラームをセットする
-                AlarmManager am = (AlarmManager)AlertSettingActivity.this.getSystemService(ALARM_SERVICE);
-                am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pending);
+                AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+                am.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pending);
 
-                Intent homeIntent = new Intent(AlertSettingActivity.this, MainActivity.class);
+                Toast.makeText(getApplicationContext(), "Set Alarm ", Toast.LENGTH_SHORT).show();
+
+                // setしたあとはホームに飛ばす
+                Intent homeIntent = new Intent(AlermSettingActivity.this, MainActivity.class);
                 startActivityForResult(homeIntent, 0);
 
             }

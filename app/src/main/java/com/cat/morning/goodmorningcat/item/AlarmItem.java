@@ -6,6 +6,8 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by imarie on 16/02/27.
@@ -56,6 +58,15 @@ public class AlarmItem implements Serializable {
 
     public AlarmItem() {
 
+    }
+
+    public void removeDay(Day day) {
+
+        List<Day> result = new LinkedList<Day>();
+        for(Day d : getDays())
+            if(!d.equals(day))
+                result.add(d);
+        setDays(result.toArray(new Day[result.size()]));
     }
 
     /**

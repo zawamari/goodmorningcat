@@ -14,17 +14,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
-
 import java.util.Calendar;
 
-/**
- * Created by imarie on 16/01/24.
- */
 public class AlermSettingActivity extends AppCompatActivity {
 
     private static final int bid2 = 2;
@@ -69,39 +64,62 @@ public class AlermSettingActivity extends AppCompatActivity {
         /*
          * 曜日選択
          */
-        Spinner spDayOfTheWeek = (Spinner)findViewById(R.id.spDayOfTheWeek);
-
-        ArrayAdapter<String> weekTypeAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
-        weekTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        weekTypeAdapter.add("月曜日");
-        weekTypeAdapter.add("火曜日");
-        weekTypeAdapter.add("水曜日");
-        weekTypeAdapter.add("木曜日");
-        weekTypeAdapter.add("金曜日");
-        weekTypeAdapter.add("土曜日");
-        weekTypeAdapter.add("日曜日");
-
-        spDayOfTheWeek.setAdapter(weekTypeAdapter);
-
-        spDayOfTheWeek.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Spinner spinner = (Spinner) parent;
-                // 選択されたアイテムを取得します
-                String item = (String) spinner.getSelectedItem();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
+//        final AlarmItem alarm;
+//
+//        final AlarmItem.Day[] days = {AlarmItem.Day.MONDAY, AlarmItem.Day.TUESDAY, AlarmItem.Day.WEDNESDAY, AlarmItem.Day.THURSDAY, AlarmItem.Day.FRIDAY, AlarmItem.Day.SATURDAY, AlarmItem.Day.SUNDAY};
+//
+//        TextView tvDayOfTheWeek = (TextView)findViewById(R.id.tvDayOfTheWeek);
+//        tvDayOfTheWeek.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                AlertDialog.Builder alert = new AlertDialog.Builder(AlermSettingActivity.this);
+//
+//                alert.setTitle("Repeat ??");
+//                String[] repeatDays = {"Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"};
+//
+//                CharSequence[] multiListItems = new CharSequence[repeatDays.length];
+//                for (int i = 0; i < multiListItems.length; i++)
+//                    multiListItems[i] = repeatDays[i];
+//
+//                boolean[] checkedItems = new boolean[multiListItems.length];
+//                for (AlarmItem.Day day : days) {
+//                    checkedItems[day.ordinal()] = true;
+//                }
+//                alert.setMultiChoiceItems(multiListItems, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
+//
+//                    @Override
+//                    public void onClick(final DialogInterface dialog, int which, boolean isChecked) {
+//                        AlarmItem.Day thisDay = AlarmItem.Day.values()[which];
+//
+//                            if (isChecked) {
+//                                alarm.addDay(thisDay);
+//                            } else {
+//                                // Only remove the day if there are more than 1
+//                                // selected
+//                                if (alarm.getDays().length > 1) {
+//                                    alarm.removeDay(thisDay);
+//                                } else {
+//                                    // If the last day was unchecked, re-check
+//                                    // it
+//                                    ((AlertDialog) dialog).getListView().setItemChecked(which, true);
+//                                }
+//                        }
+//                    }
+//                });
+//                alert.setOnCancelListener(new DialogInterface.OnCancelListener() {
+//                    @Override
+//                    public void onCancel(DialogInterface dialog) {
+//
+//
+//                    }
+//                });
+//                alert.show();
+//            }
+//        });
 
         /*
          * 時間
          */
-
         final EditText etTime = (EditText)findViewById(R.id.etTime);
         etTime.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,34 +146,44 @@ public class AlermSettingActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.tvSet)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Snackbar.make(((LinearLayout) findViewById(R.id.llView)), "Test アラームセット完了。", Snackbar.LENGTH_LONG)
+                Snackbar.make(findViewById(R.id.llView), "Test アラームセット完了。", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 
                 // DBに登録する
 
+                setData();
                 SQLiteDatabase db = MyDBHelper.getInstance(AlermSettingActivity.this).getWritableDatabase();
 
                 String etTime = ((EditText)findViewById(R.id.etTime)).getText().toString();
 
 
-                db.execSQL("INSERT INTO alert_set_table (week,time,cat_type, status) VALUES ('火曜',?, 1, 1)", new String[] {etTime});
+                db.execSQL("INSERT INTO alert_set_table (week, time, vibrate, cat_type, status) VALUES ('火曜',?, 0, 1, 0)", new String[]{etTime});
 
                 Cursor cs = db.rawQuery("SELECT * FROM alert_set_table ", null);
 
                 Log.d("test count is ", Integer.toString(cs.getCount()));
 
+                cs.close();
 
                 /*  アラート登録時はONの状態なので、アラートをセットする。 */
-                Calendar calendar = Calendar.getInstance();
+
+                // セットする時刻取得
                 String[] time = etTime.split(":", 0);
 
-//                calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(time[0]));
-//                calendar.set(Calendar.MINUTE, Integer.parseInt(time[1]));
+                // アラーム時間設定
+                Calendar cal = Calendar.getInstance();
+                cal.setTimeInMillis(System.currentTimeMillis());
+                // 設定した時刻をカレンダーに設定
+                cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(time[0]));
+                cal.set(Calendar.MINUTE, Integer.parseInt(time[1]));
+                cal.set(Calendar.SECOND, 0);
+                cal.set(Calendar.MILLISECOND, 0);
 
-                // Calendarを使って現在の時間をミリ秒で取得
-                calendar.setTimeInMillis(System.currentTimeMillis());
-                // 5秒後に設定
-                calendar.add(Calendar.SECOND, 5);
+                // 過去だったら明日にする
+                if(cal.getTimeInMillis() < System.currentTimeMillis()){
+                    cal.add(Calendar.DAY_OF_YEAR, 1);
+                }
+
 
                 Intent intent = new Intent(getApplicationContext(), AlarmBroadcastReceiver.class);
                 intent.putExtra("intentId", 2);
@@ -163,7 +191,7 @@ public class AlermSettingActivity extends AppCompatActivity {
 
                 // アラームをセットする
                 AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
-                am.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pending);
+                am.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pending);
 
                 Toast.makeText(getApplicationContext(), "Set Alarm ", Toast.LENGTH_SHORT).show();
 
@@ -174,6 +202,29 @@ public class AlermSettingActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void setData() {
+
+//        ContentValues cv = new ContentValues();
+//
+//        try {
+//            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+//            ObjectOutputStream oos = null;
+//            oos = new ObjectOutputStream(bos);
+//            oos.writeObject(alarm.getDays());
+//            byte[] buff = bos.toByteArray();
+//
+//            cv.put("week", buff);
+//
+//        } catch (Exception e){
+//        }
+//        cv.put("time", alarm.getAlarmTimeString());
+//        cv.put("vibrate", alarm.getDifficulty().ordinal());
+//        cv.put("cat_type", alarm.getAlarmTonePath());
+//        cv.put("status", alarm.getVibrate());
+//
+//        return getDatabase().insert(ALARM_TABLE, null, cv);
     }
 
 }

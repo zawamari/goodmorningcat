@@ -34,7 +34,7 @@ public class TestSwipeActivity extends Activity {
 
         pb = (ProgressBar)findViewById(R.id.ProgressBar01);
 
-        // 音をならす
+        // 音をならす TODO:これだとalermで起動した時に鳴らない
         final SoundPool mSoundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
         final int mSoundId = mSoundPool.load(getApplicationContext(), R.raw.cat1, 0);
         mSoundPool.play(

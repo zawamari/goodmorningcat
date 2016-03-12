@@ -1,10 +1,13 @@
 package com.cat.morning.goodmorningcat;
 
 import android.app.AlarmManager;
+import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +17,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -112,6 +117,36 @@ public class MainActivity extends AppCompatActivity {
                 });
                 llCallList.addView(callListCell);
 
+                callListCell.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        final Dialog dialog = new Dialog(MainActivity.this);
+                        // タイトル非表示
+                        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+                        // フルスクリーン
+                        dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
+                        dialog.setContentView(R.layout.dialog_alarm_delete);
+                        // 背景を透明にする
+//                        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                        // OK ボタンのリスナ
+                        dialog.findViewById(R.id.bOk).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                            }
+                        });
+                        // Close ボタンのリスナ
+                        dialog.findViewById(R.id.bNo).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                            }
+                        });
+                        dialog.show();
+                        return false;
+                    }
+                });
 
 
 

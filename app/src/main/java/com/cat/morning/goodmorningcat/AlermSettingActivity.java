@@ -6,7 +6,9 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -19,6 +21,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 import java.util.Calendar;
+import java.util.Random;
 
 public class AlermSettingActivity extends AppCompatActivity {
 
@@ -150,14 +153,13 @@ public class AlermSettingActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
 
                 // DBに登録する
-
                 setData();
                 SQLiteDatabase db = MyDBHelper.getInstance(AlermSettingActivity.this).getWritableDatabase();
 
                 String etTime = ((EditText)findViewById(R.id.etTime)).getText().toString();
 
 
-                db.execSQL("INSERT INTO alert_set_table (week, time, vibrate, cat_type, status) VALUES ('火曜',?, 0, 1, 0)", new String[]{etTime});
+                db.execSQL("INSERT INTO alert_set_table (week, time, vibrate, cat_type, status) VALUES ('月曜',?, 0, 1, 0)", new String[]{etTime});
 
                 Cursor cs = db.rawQuery("SELECT * FROM alert_set_table ", null);
 
@@ -166,7 +168,6 @@ public class AlermSettingActivity extends AppCompatActivity {
                 cs.close();
 
                 /*  アラート登録時はONの状態なので、アラートをセットする。 */
-
                 // セットする時刻取得
                 String[] time = etTime.split(":", 0);
 
@@ -187,11 +188,17 @@ public class AlermSettingActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(getApplicationContext(), AlarmBroadcastReceiver.class);
                 intent.putExtra("intentId", 2);
-                PendingIntent pending = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
+                // TODO: 複数登録したい。
+                Random r = new Random();
+                int n = r.nextInt(50);
+                // request codeを個別にすれば良い。今はランダムにしているが、識別したいのでDBのidとかにしたい
+                Log.d("test requestCode", Integer.toString(n));
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), n, intent, 0);
 
                 // アラームをセットする
-                AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
-                am.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pending);
+                AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+
+                alarmManager.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pendingIntent);
 
                 Toast.makeText(getApplicationContext(), "Set Alarm ", Toast.LENGTH_SHORT).show();
 
@@ -202,6 +209,16 @@ public class AlermSettingActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private Uri makeUri() {
+        StringBuffer buffer = new StringBuffer();
+        long nowElapsedRealtime = SystemClock.elapsedRealtime();
+        buffer.append("SCHEME" + "://")
+                .append("HOSTNAME" + "/")
+                .append(Long.toString(nowElapsedRealtime));
+        Uri uri = Uri.parse(buffer.toString());
+        return uri;
     }
 
     private void setData() {

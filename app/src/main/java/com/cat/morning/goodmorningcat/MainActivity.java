@@ -56,11 +56,11 @@ public class MainActivity extends AppCompatActivity {
         // DB呼び出し
         final SQLiteDatabase db = MyDBHelper.getInstance(MainActivity.this).getWritableDatabase();
 
-        Cursor cursor = db.rawQuery("SELECT week, time, cat_type, status, id FROM alert_set_table ORDER BY id", null);
+        final Cursor cursor = db.rawQuery("SELECT week, time, cat_type, status, id FROM alert_set_table ORDER BY id", null);
 
         if (cursor.moveToFirst()) {
             for (int i = 0; i < cursor.getCount(); i++) {
-                LinearLayout callListCell = (LinearLayout)inflater.inflate(R.layout.part_call_list, llCallList, false);
+                final LinearLayout callListCell = (LinearLayout)inflater.inflate(R.layout.part_call_list, llCallList, false);
                 callListCell.setId(i);
                 final int count = i + 1;
 
@@ -134,6 +134,10 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onClick(View v) {
                                 dialog.dismiss();
+//                                deleteAlarm(db, cursor.getInt(0));
+//                                db.execSQL("DELETE FROM alert_set_table WHERE id = ?", new Integer[] {cursor.getInt(0)});
+//                                callListCell.removeAllViews();
+
                             }
                         });
                         // Close ボタンのリスナ
@@ -183,6 +187,10 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    public void deleteAlarm(SQLiteDatabase db, int alarmId) {
+        db.execSQL("DELETE FROM alert_set_table WHERE id = ?", new Integer[] {alarmId});
     }
 
     @Override

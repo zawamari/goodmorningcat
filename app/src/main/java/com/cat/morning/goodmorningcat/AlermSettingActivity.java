@@ -6,9 +6,7 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -19,14 +17,9 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 import java.util.Calendar;
-import java.util.Random;
 
 public class AlermSettingActivity extends AppCompatActivity {
-
-    private static final int bid2 = 2;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,9 +155,9 @@ public class AlermSettingActivity extends AppCompatActivity {
                 db.execSQL("INSERT INTO alert_set_table (week, time, vibrate, cat_type, status) VALUES ('月曜',?, 0, 1, 0)", new String[]{etTime});
 
                 Cursor cs = db.rawQuery("SELECT * FROM alert_set_table ", null);
-
-                Log.d("test count is ", Integer.toString(cs.getCount()));
-
+                cs.moveToLast();
+                int requestCode = cs.getInt(0); // pendingIntent登録用requestCode
+Log.d("test requestCode is ", Integer.toString(requestCode));
                 cs.close();
 
                 /*  アラート登録時はONの状態なので、アラートをセットする。 */
@@ -188,37 +181,23 @@ public class AlermSettingActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(getApplicationContext(), AlarmBroadcastReceiver.class);
                 intent.putExtra("intentId", 2);
-                // TODO: 複数登録したい。
-                Random r = new Random();
-                int n = r.nextInt(50);
-                // request codeを個別にすれば良い。今はランダムにしているが、識別したいのでDBのidとかにしたい
-                Log.d("test requestCode", Integer.toString(n));
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), n, intent, 0);
+
+                // もし新規登録だったら、DBに登録されている数の次の数をrequestCodeにする. 登録済みのやつの編集なら、そのIDをrequestCodeに使用する
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), requestCode, intent, 0);
 
                 // アラームをセットする
                 AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
                 alarmManager.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pendingIntent);
 
-                Toast.makeText(getApplicationContext(), "Set Alarm ", Toast.LENGTH_SHORT).show();
-
                 // setしたあとはホームに飛ばす
                 Intent homeIntent = new Intent(AlermSettingActivity.this, MainActivity.class);
                 startActivityForResult(homeIntent, 0);
+                AlermSettingActivity.this.finish(); // Activity終了
 
             }
         });
 
-    }
-
-    private Uri makeUri() {
-        StringBuffer buffer = new StringBuffer();
-        long nowElapsedRealtime = SystemClock.elapsedRealtime();
-        buffer.append("SCHEME" + "://")
-                .append("HOSTNAME" + "/")
-                .append(Long.toString(nowElapsedRealtime));
-        Uri uri = Uri.parse(buffer.toString());
-        return uri;
     }
 
     private void setData() {

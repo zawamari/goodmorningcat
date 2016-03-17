@@ -31,6 +31,8 @@ import com.cat.morning.goodmorningcat.test.TestShakeActivity;
 import com.cat.morning.goodmorningcat.test.TestSwipeActivity;
 import com.cat.morning.goodmorningcat.test.TestTapActivity;
 
+import io.repro.android.Repro;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final int bid1 = 1;
@@ -41,6 +43,26 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
+        /*
+         * Repro
+         */
+        // repro acount
+        // nekoappdevelopers@gmail.com  nekonekoneko
+        // token; c5de83ed-5b81-42f3-83c8-bc92410147c0
+        // ID ; y6w10q39
+
+        // Setup Repro
+//        Repro.setup("c5de83ed-5b81-42f3-83c8-bc92410147c0");
+//        Repro.startRecording();
+//        Repro.setUserID("y6w10q39");
+//        Repro.track("app test");
+
+        // アプリ内メッセージを出す
+        Repro.disableInAppMessageOnActive();
+        Repro.setup("c5de83ed-5b81-42f3-83c8-bc92410147c0");
+        Repro.showInAppMessage(this);
 
 
         LayoutInflater inflater = getLayoutInflater();

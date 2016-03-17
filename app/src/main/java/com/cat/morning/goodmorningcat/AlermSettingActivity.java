@@ -154,6 +154,7 @@ public class AlermSettingActivity extends AppCompatActivity {
 
                 db.execSQL("INSERT INTO alert_set_table (week, time, vibrate, cat_type, status) VALUES ('月曜',?, 0, 1, 0)", new String[]{etTime});
 
+                // SELECT MAX(id) FROM alert_set_table でいけないか
                 Cursor cs = db.rawQuery("SELECT * FROM alert_set_table ", null);
                 cs.moveToLast();
                 int requestCode = cs.getInt(0); // pendingIntent登録用requestCode

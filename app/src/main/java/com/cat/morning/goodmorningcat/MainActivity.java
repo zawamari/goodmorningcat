@@ -57,10 +57,10 @@ public class MainActivity extends AppCompatActivity {
         // ID ; y6w10q39
 
         // Setup Repro
-//        Repro.setup("c5de83ed-5b81-42f3-83c8-bc92410147c0");
-//        Repro.startRecording();
-//        Repro.setUserID("y6w10q39");
-//        Repro.track("app test");
+        Repro.setup("c5de83ed-5b81-42f3-83c8-bc92410147c0");
+        Repro.startRecording();
+        Repro.setUserID("y6w10q39");
+        Repro.track("app test");
 
         // アプリ内メッセージを出す
         Repro.disableInAppMessageOnActive();
@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         // push通知設定  662649025058
-        Repro.setup("a1e6be89-3139-4814-bf5c-494634ea7cb5");
+        Repro.setup("c5de83ed-5b81-42f3-83c8-bc92410147c0");
         Repro.enablePushNotification("662649025058");
 
 
@@ -227,6 +227,16 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+        if (extras != null && extras.containsKey("repro-notification-id")) {
+            Repro.trackNotificationOpened(extras.getString("repro-notification-id"));
+        }
     }
 
     public void deleteAlarm(SQLiteDatabase db, int alarmId) {

@@ -20,7 +20,7 @@ android {
 }
 
 dependencies {
-    compile 'io.repro:repro-android-sdk:1.0.1'
+    compile 'io.repro:repro-android-sdk:1.1.2'
     compile "com.google.android.gms:play-services-gcm:8.1.0"
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile fileTree(dir: 'libs', include: ['*.jar'])

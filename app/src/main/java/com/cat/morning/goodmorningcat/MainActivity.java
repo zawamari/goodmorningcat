@@ -7,13 +7,9 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
@@ -31,7 +27,6 @@ import com.cat.morning.goodmorningcat.test.TestFlingActivity;
 import com.cat.morning.goodmorningcat.test.TestShakeActivity;
 import com.cat.morning.goodmorningcat.test.TestSwipeActivity;
 import com.cat.morning.goodmorningcat.test.TestTapActivity;
-import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
 import io.repro.android.Repro;
@@ -225,6 +220,36 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        findViewById(R.id.ivTop).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        findViewById(R.id.ivTimeSet).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, AlermSettingActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        findViewById(R.id.ivCatList).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, CatProfileActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        findViewById(R.id.ivSetting).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, SettingActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
     }

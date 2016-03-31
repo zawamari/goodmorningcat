@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -30,6 +31,8 @@ import com.cat.morning.goodmorningcat.test.TestFlingActivity;
 import com.cat.morning.goodmorningcat.test.TestShakeActivity;
 import com.cat.morning.goodmorningcat.test.TestSwipeActivity;
 import com.cat.morning.goodmorningcat.test.TestTapActivity;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
 
 import io.repro.android.Repro;
 
@@ -61,8 +64,13 @@ public class MainActivity extends AppCompatActivity {
 
         // アプリ内メッセージを出す
         Repro.disableInAppMessageOnActive();
-        Repro.setup("c5de83ed-5b81-42f3-83c8-bc92410147c0");
+        Repro.setup("a1e6be89-3139-4814-bf5c-494634ea7cb5");
         Repro.showInAppMessage(this);
+
+
+        // push通知設定  662649025058
+        Repro.setup("a1e6be89-3139-4814-bf5c-494634ea7cb5");
+        Repro.enablePushNotification("662649025058");
 
 
         LayoutInflater inflater = getLayoutInflater();
@@ -202,11 +210,21 @@ public class MainActivity extends AppCompatActivity {
                 PendingIntent pending = PendingIntent.getBroadcast(getApplicationContext(), bid1, indent, 0);
 
                 // アラームを解除する
-                AlarmManager am = (AlarmManager)MainActivity.this.getSystemService(ALARM_SERVICE);
+                AlarmManager am = (AlarmManager) MainActivity.this.getSystemService(ALARM_SERVICE);
                 am.cancel(pending);
                 Toast.makeText(getApplicationContext(), "Cancel ALARM 1", Toast.LENGTH_SHORT).show();
             }
         });
+
+        findViewById(R.id.llNoSetting).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), AlermSettingActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
 
 
     }
@@ -253,5 +271,20 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public class CropSquareTransformation implements Transformation {
+        @Override public Bitmap transform(Bitmap source) {
+            int size = Math.min(source.getWidth(), source.getHeight());
+            int x = (source.getWidth() - size) / 2;
+            int y = (source.getHeight() - size) / 2;
+            Bitmap result = Bitmap.createBitmap(source, x, y, size, size);
+            if (result != source) {
+                source.recycle();
+            }
+            return result;
+        }
+
+        @Override public String key() { return "square()"; }
     }
 }

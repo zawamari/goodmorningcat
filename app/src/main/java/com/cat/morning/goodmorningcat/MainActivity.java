@@ -70,13 +70,9 @@ public class MainActivity extends AppCompatActivity {
 
         LayoutInflater inflater = getLayoutInflater();
 
-        String[] catArray = {"太郎", "ザビエル", "みけこ", "マイケル" };
+        String[] catArray = {"みけこ"};
 
         LinearLayout llCallList = (LinearLayout)findViewById(R.id.llCallList);
-
-//        ListView listView = (ListView)findViewById(R.id.lvCallList);
-//        ArrayList<CallItem> data = new ArrayList<CallItem>();
-//        Adapter adapter = new CallAdapter(this, data, R.layout.part_call_list);
 
         // DB呼び出し
         final SQLiteDatabase db = MyDBHelper.getInstance(MainActivity.this).getWritableDatabase();
@@ -102,21 +98,6 @@ public class MainActivity extends AppCompatActivity {
                         // 画像
                         ((ImageView)callListCell.findViewById(R.id.ivCatImage)).setImageResource(R.mipmap.taro);
                         break;
-                    case 1:
-                        // 名前
-                        ((TextView)callListCell.findViewById(R.id.tvCatStaff)).setText(catArray[1]);
-                        ((ImageView)callListCell.findViewById(R.id.ivCatImage)).setImageResource(R.mipmap.zabier);
-                        break;
-                    case 2:
-                        // 名前
-                        ((TextView)callListCell.findViewById(R.id.tvCatStaff)).setText(catArray[2]);
-                        ((ImageView)callListCell.findViewById(R.id.ivCatImage)).setImageResource(R.mipmap.mikeko);
-                        break;
-                    case 3:
-                        // 名前
-                        ((TextView)callListCell.findViewById(R.id.tvCatStaff)).setText(catArray[3]);
-                        ((ImageView)callListCell.findViewById(R.id.ivCatImage)).setImageResource(R.mipmap.michael);
-                        break;
                 }
 
 
@@ -137,31 +118,29 @@ public class MainActivity extends AppCompatActivity {
                 onOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        db.execSQL("UPDATE alert_set_table SET status = ? WHERE id = ?", new Integer[] {(isChecked ? 0 : 1), count});
+                        db.execSQL("UPDATE alert_set_table SET status = ? WHERE id = ?", new Integer[]{(isChecked ? 0 : 1), count});
                     }
                 });
                 llCallList.addView(callListCell);
 
-                callListCell.setOnLongClickListener(new View.OnLongClickListener() {
+                findViewById(R.id.ivTrash).setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public boolean onLongClick(View v) {
+                    public void onClick(View v) {
+
                         final Dialog dialog = new Dialog(MainActivity.this);
                         // タイトル非表示
                         dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
                         // フルスクリーン
                         dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
                         dialog.setContentView(R.layout.dialog_alarm_delete);
-                        // 背景を透明にする
-//                        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
                         // OK ボタンのリスナ
                         dialog.findViewById(R.id.bOk).setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 dialog.dismiss();
-//                                deleteAlarm(db, cursor.getInt(0));
-//                                db.execSQL("DELETE FROM alert_set_table WHERE id = ?", new Integer[] {cursor.getInt(0)});
-//                                callListCell.removeAllViews();
+                                deleteAlarm(db, 0);
+                                callListCell.removeAllViews();
 
                             }
                         });
@@ -173,9 +152,9 @@ public class MainActivity extends AppCompatActivity {
                             }
                         });
                         dialog.show();
-                        return false;
                     }
                 });
+
 
 
 

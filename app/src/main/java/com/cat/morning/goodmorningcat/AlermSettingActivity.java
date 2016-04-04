@@ -1,10 +1,8 @@
 package com.cat.morning.goodmorningcat;
 
 import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -17,6 +15,9 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
+
+import com.cat.morning.goodmorningcat.util.AlermSettingUtils;
+
 import java.util.Calendar;
 
 public class AlermSettingActivity extends AppCompatActivity {
@@ -146,50 +147,22 @@ public class AlermSettingActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
 
                 // DBに登録する
-                setData();
-                SQLiteDatabase db = MyDBHelper.getInstance(AlermSettingActivity.this).getWritableDatabase();
+//                setData();
 
                 String etTime = ((EditText)findViewById(R.id.etTime)).getText().toString();
-
-
+                SQLiteDatabase db = MyDBHelper.getInstance(AlermSettingActivity.this).getWritableDatabase();
                 db.execSQL("INSERT INTO alert_set_table (week, time, vibrate, cat_type, status) VALUES ('月曜',?, 0, 1, 0)", new String[]{etTime});
 
-                // SELECT MAX(id) FROM alert_set_table でいけないか
-                Cursor cs = db.rawQuery("SELECT * FROM alert_set_table ", null);
-                cs.moveToLast();
-                int requestCode = cs.getInt(0); // pendingIntent登録用requestCode
-Log.d("test requestCode is ", Integer.toString(requestCode));
-                cs.close();
+
 
                 /*  アラート登録時はONの状態なので、アラートをセットする。 */
                 // セットする時刻取得
                 String[] time = etTime.split(":", 0);
 
-                // アラーム時間設定
-                Calendar cal = Calendar.getInstance();
-                cal.setTimeInMillis(System.currentTimeMillis());
-                // 設定した時刻をカレンダーに設定
-                cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(time[0]));
-                cal.set(Calendar.MINUTE, Integer.parseInt(time[1]));
-                cal.set(Calendar.SECOND, 0);
-                cal.set(Calendar.MILLISECOND, 0);
+                AlermSettingUtils.setAlerm(AlermSettingActivity.this, db, time);
 
-                // 過去だったら明日にする
-                if(cal.getTimeInMillis() < System.currentTimeMillis()){
-                    cal.add(Calendar.DAY_OF_YEAR, 1);
-                }
-
-
-                Intent intent = new Intent(getApplicationContext(), AlarmBroadcastReceiver.class);
-                intent.putExtra("intentId", 2);
-
-                // もし新規登録だったら、DBに登録されている数の次の数をrequestCodeにする. 登録済みのやつの編集なら、そのIDをrequestCodeに使用する
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), requestCode, intent, 0);
-
-                // アラームをセットする
                 AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
-                alarmManager.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pendingIntent);
 
                 // setしたあとはホームに飛ばす
                 Intent homeIntent = new Intent(AlermSettingActivity.this, MainActivity.class);

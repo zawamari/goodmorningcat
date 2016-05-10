@@ -9,13 +9,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.cat.morning.goodmorningcat.AlarmBroadcastReceiver;
-import com.cat.morning.goodmorningcat.MyDBHelper;
 
 import java.util.Calendar;
 
-/**
- * Created by imarie on 16/04/04.
- */
 public class AlermSettingUtils {
 
     public static void setAlerm(Activity activity, SQLiteDatabase db, String[] time){

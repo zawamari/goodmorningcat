@@ -5,15 +5,9 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -122,9 +116,6 @@ public class AlermSettingActivity extends AppCompatActivity {
         tvTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Calendar calendar = Calendar.getInstance();
-                int hour = calendar.get(Calendar.HOUR_OF_DAY);
-                int minute = calendar.get(Calendar.MINUTE);
                 new TimePickerDialog(AlermSettingActivity.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
@@ -141,12 +132,12 @@ public class AlermSettingActivity extends AppCompatActivity {
         /*
          * 登録ボタン
          */
-        ((TextView) findViewById(R.id.tvSet)).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.tvSet).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 // DBに登録する
-                String tvTime = ((TextView)findViewById(R.id.tvTime)).getText().toString();
+                String tvTime = ((TextView) findViewById(R.id.tvTime)).getText().toString();
                 SQLiteDatabase db = MyDBHelper.getInstance(AlermSettingActivity.this).getWritableDatabase();
                 db.execSQL("INSERT INTO alert_set_table (week, time, vibrate, cat_type, status) VALUES ('月曜',?, 0, 1, 0)", new String[]{tvTime});
                 // 曜日は今後のために残しておく
@@ -156,9 +147,6 @@ public class AlermSettingActivity extends AppCompatActivity {
                 String[] time = tvTime.split(":", 0);
 
                 AlermSettingUtils.setAlerm(AlermSettingActivity.this, db, time);
-
-                AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-
 
                 // setしたあとはホームに飛ばす
                 Intent homeIntent = new Intent(AlermSettingActivity.this, MainActivity.class);

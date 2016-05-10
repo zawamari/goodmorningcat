@@ -13,8 +13,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.CompoundButton;
@@ -22,12 +20,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.cat.morning.goodmorningcat.test.TestFlingActivity;
-import com.cat.morning.goodmorningcat.test.TestShakeActivity;
-import com.cat.morning.goodmorningcat.test.TestSwipeActivity;
-import com.cat.morning.goodmorningcat.test.TestTapActivity;
 import com.cat.morning.goodmorningcat.util.AlermSettingUtils;
 import com.squareup.picasso.Transformation;
 
@@ -245,6 +237,7 @@ public class MainActivity extends AppCompatActivity {
                 cursor.moveToNext();
             }
         }
+        cursor.close();
 
     }
 
@@ -273,7 +266,7 @@ public class MainActivity extends AppCompatActivity {
      * アラームを削除する
      */
     public void deleteAlarm(SQLiteDatabase db, int alarmId) {
-        Log.d("test delete alerm id is ", Integer.toString(alarmId));
+        Log.d("test delete id is ", Integer.toString(alarmId));
         db.execSQL("DELETE FROM alert_set_table WHERE id = ?", new Integer[] {alarmId});
         // 再描画
         canselAlarm(alarmId);
@@ -281,18 +274,18 @@ public class MainActivity extends AppCompatActivity {
         showAlarmList();
     }
 
-    public class CropSquareTransformation implements Transformation {
-        @Override public Bitmap transform(Bitmap source) {
-            int size = Math.min(source.getWidth(), source.getHeight());
-            int x = (source.getWidth() - size) / 2;
-            int y = (source.getHeight() - size) / 2;
-            Bitmap result = Bitmap.createBitmap(source, x, y, size, size);
-            if (result != source) {
-                source.recycle();
-            }
-            return result;
-        }
-
-        @Override public String key() { return "square()"; }
-    }
+//    public class CropSquareTransformation implements Transformation {
+//        @Override public Bitmap transform(Bitmap source) {
+//            int size = Math.min(source.getWidth(), source.getHeight());
+//            int x = (source.getWidth() - size) / 2;
+//            int y = (source.getHeight() - size) / 2;
+//            Bitmap result = Bitmap.createBitmap(source, x, y, size, size);
+//            if (result != source) {
+//                source.recycle();
+//            }
+//            return result;
+//        }
+//
+//        @Override public String key() { return "square()"; }
+//    }
 }

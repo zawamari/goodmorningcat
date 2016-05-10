@@ -18,10 +18,6 @@ import java.util.Calendar;
  */
 public class AlermSettingUtils {
 
-    public static final int aaa = 100;
-
-
-
     public static void setAlerm(Activity activity, SQLiteDatabase db, String[] time){
 
         Cursor cs = db.rawQuery("SELECT MAX(id) FROM alert_set_table ", null);
@@ -31,7 +27,12 @@ public class AlermSettingUtils {
         Log.d("test requestCode is ", Integer.toString(requestCode));
         cs.close();
 
+        setAlarm(activity, requestCode, time);
 
+
+    }
+
+    public static void setAlarm(Activity activity, int requestCode, String[] time) {
         // アラーム時間設定
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(System.currentTimeMillis());

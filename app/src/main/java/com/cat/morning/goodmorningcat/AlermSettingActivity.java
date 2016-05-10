@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -31,31 +32,31 @@ public class AlermSettingActivity extends AppCompatActivity {
         /*
          * 猫選択
          */
-        Spinner spCatType = (Spinner)findViewById(R.id.spCatType);
-
-        // TODO: ネコのタイプはローカルDBから取得するように変更する
-        ArrayAdapter<String> catTypeAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
-        catTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        catTypeAdapter.add("みけこ");
-        catTypeAdapter.add("マイケル");
-        catTypeAdapter.add("太郎");
-
-        spCatType.setAdapter(catTypeAdapter);
-
-        spCatType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Spinner spinner = (Spinner) parent;
-                // 選択されたアイテムを取得します
-                String item = (String) spinner.getSelectedItem();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
+//        Spinner spCatType = (Spinner)findViewById(R.id.spCatType);
+//
+//        // TODO: ネコのタイプはローカルDBから取得するように変更する
+//        ArrayAdapter<String> catTypeAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
+//        catTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//
+//        catTypeAdapter.add("みけこ");
+//        catTypeAdapter.add("マイケル");
+//        catTypeAdapter.add("太郎");
+//
+//        spCatType.setAdapter(catTypeAdapter);
+//
+//        spCatType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                Spinner spinner = (Spinner) parent;
+//                // 選択されたアイテムを取得します
+//                String item = (String) spinner.getSelectedItem();
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//
+//            }
+//        });
 
 
         /*
@@ -117,8 +118,8 @@ public class AlermSettingActivity extends AppCompatActivity {
         /*
          * 時間
          */
-        final EditText etTime = (EditText)findViewById(R.id.etTime);
-        etTime.setOnClickListener(new View.OnClickListener() {
+        final TextView tvTime = (TextView)findViewById(R.id.tvTime);
+        tvTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Calendar calendar = Calendar.getInstance();
@@ -129,7 +130,7 @@ public class AlermSettingActivity extends AppCompatActivity {
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                         // 時間が設定されたときの処理
                         Log.v("Time", String.format("%02d:%02d", hourOfDay, minute));
-                        etTime.setText(String.format("%02d:%02d", hourOfDay, minute));
+                        tvTime.setText(String.format("%02d:%02d", hourOfDay, minute));
                     }
                 }, 13, 0, true).show();
             }
@@ -143,21 +144,16 @@ public class AlermSettingActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.tvSet)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Snackbar.make(findViewById(R.id.llView), "Test アラームセット完了。", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
 
                 // DBに登録する
-//                setData();
-
-                String etTime = ((EditText)findViewById(R.id.etTime)).getText().toString();
+                String tvTime = ((TextView)findViewById(R.id.tvTime)).getText().toString();
                 SQLiteDatabase db = MyDBHelper.getInstance(AlermSettingActivity.this).getWritableDatabase();
-                db.execSQL("INSERT INTO alert_set_table (week, time, vibrate, cat_type, status) VALUES ('月曜',?, 0, 1, 0)", new String[]{etTime});
-
-
+                db.execSQL("INSERT INTO alert_set_table (week, time, vibrate, cat_type, status) VALUES ('月曜',?, 0, 1, 0)", new String[]{tvTime});
+                // 曜日は今後のために残しておく
 
                 /*  アラート登録時はONの状態なので、アラートをセットする。 */
                 // セットする時刻取得
-                String[] time = etTime.split(":", 0);
+                String[] time = tvTime.split(":", 0);
 
                 AlermSettingUtils.setAlerm(AlermSettingActivity.this, db, time);
 
@@ -172,29 +168,20 @@ public class AlermSettingActivity extends AppCompatActivity {
             }
         });
 
-    }
 
-    private void setData() {
 
-//        ContentValues cv = new ContentValues();
-//
-//        try {
-//            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-//            ObjectOutputStream oos = null;
-//            oos = new ObjectOutputStream(bos);
-//            oos.writeObject(alarm.getDays());
-//            byte[] buff = bos.toByteArray();
-//
-//            cv.put("week", buff);
-//
-//        } catch (Exception e){
-//        }
-//        cv.put("time", alarm.getAlarmTimeString());
-//        cv.put("vibrate", alarm.getDifficulty().ordinal());
-//        cv.put("cat_type", alarm.getAlarmTonePath());
-//        cv.put("status", alarm.getVibrate());
-//
-//        return getDatabase().insert(ALARM_TABLE, null, cv);
+        /*
+         * MENU
+         */
+        findViewById(R.id.ivTop).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent homeIntent = new Intent(AlermSettingActivity.this, MainActivity.class);
+                startActivityForResult(homeIntent, 0);
+                AlermSettingActivity.this.finish(); // Activity終了
+            }
+        });
+
     }
 
 }

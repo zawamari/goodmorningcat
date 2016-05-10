@@ -3,8 +3,8 @@
     android:id="@+id/llView"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,7 +16,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:src="@drawable/nav_top_on"/>
+            android:src="@drawable/nav_top"/>
 
         <ImageView
             android:id="@+id/ivTimeSet"
@@ -41,39 +41,26 @@
 
     </LinearLayout>
 
-
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:layout_margin="10dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:layout_height="100dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:gravity="center_vertical|center"
+        android:orientation="vertical"
+        android:background="@drawable/line">
+
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="ネコのご指名"/>
-
-        <ImageView
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:src="@mipmap/hand"
-            android:background="@color/colorPrimaryDark"/>
-
-        <Spinner
-            android:id="@+id/spCatType"
+            android:id="@+id/tvTime"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-        </Spinner>
+            android:layout_height="wrap_content"
+            android:text="-- : --"
+            android:textStyle="bold"
+            android:textSize="50sp"/>
 
     </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/colorPrimaryDark"/>
 
     <!--<LinearLayout-->
         <!--android:layout_width="match_parent"-->
@@ -98,11 +85,6 @@
 
     <!--</LinearLayout>-->
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/colorPrimaryDark"/>
-
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -115,34 +97,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="時刻"/>
-
-        <EditText
-            android:id="@+id/etTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="00:00"/>
-
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/colorPrimaryDark"/>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:layout_margin="10dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="アラーム音・音量"/>
+            android:text="音量"/>
 
         <Spinner
             android:layout_width="wrap_content"
@@ -195,7 +150,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="マナーモード"/>
+            android:text="マナーモード設定"/>
 
         <Spinner
             android:layout_width="wrap_content"
@@ -240,6 +195,19 @@
     </LinearLayout>
 
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="bottom">
 
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ad_bg"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"/>
+
+    </RelativeLayout>
 
 </LinearLayout>

@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
@@ -27,30 +28,25 @@ import com.cat.morning.goodmorningcat.test.TestFlingActivity;
 import com.cat.morning.goodmorningcat.test.TestShakeActivity;
 import com.cat.morning.goodmorningcat.test.TestSwipeActivity;
 import com.cat.morning.goodmorningcat.test.TestTapActivity;
+import com.cat.morning.goodmorningcat.util.AlermSettingUtils;
 import com.squareup.picasso.Transformation;
 
 import io.repro.android.Repro;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int bid1 = 1;
+    LinearLayout llCallList;
+    LayoutInflater inflater;
+    String[] catArray = {"みけこ"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-
 
         /*
          * Repro
          */
-        // repro acount
-        // nekoappdevelopers@gmail.com  nekonekoneko
-        // token; c5de83ed-5b81-42f3-83c8-bc92410147c0
-        // ID ; y6w10q39
-
         // Setup Repro
         Repro.setup("c5de83ed-5b81-42f3-83c8-bc92410147c0");
         Repro.startRecording();
@@ -63,105 +59,16 @@ public class MainActivity extends AppCompatActivity {
         Repro.showInAppMessage(this);
 
 
-        // push通知設定  662649025058
+        // push通知設定
         Repro.setup("c5de83ed-5b81-42f3-83c8-bc92410147c0");
         Repro.enablePushNotification("662649025058");
 
 
-        LayoutInflater inflater = getLayoutInflater();
+        inflater = getLayoutInflater();
 
-        String[] catArray = {"みけこ"};
+        llCallList = (LinearLayout)findViewById(R.id.llCallList);
 
-        LinearLayout llCallList = (LinearLayout)findViewById(R.id.llCallList);
-
-        // DB呼び出し
-        final SQLiteDatabase db = MyDBHelper.getInstance(MainActivity.this).getWritableDatabase();
-
-        final Cursor cursor = db.rawQuery("SELECT week, time, cat_type, status, id FROM alert_set_table ORDER BY id", null);
-
-        if (cursor.moveToFirst()) {
-            for (int i = 0; i < cursor.getCount(); i++) {
-                final LinearLayout callListCell = (LinearLayout)inflater.inflate(R.layout.part_call_list, llCallList, false);
-                callListCell.setId(i);
-                final int count = i + 1;
-
-//                Log.d("test week", cursor.getString(0));
-//                Log.d("test time", cursor.getString(1));
-//                Log.d("test cat_type", cursor.getString(2));
-//                Log.d("test status", cursor.getString(3));
-//                Log.d("test id", cursor.getString(4));
-//                Log.d("test ", "---------------");
-                switch (cursor.getInt(2)) {
-                    case 0:
-                        // 名前
-                        ((TextView)callListCell.findViewById(R.id.tvCatStaff)).setText(catArray[0]);
-                        // 画像
-                        ((ImageView)callListCell.findViewById(R.id.ivCatImage)).setImageResource(R.mipmap.taro);
-                        break;
-                }
-
-
-                // 時間
-                ((TextView)callListCell.findViewById(R.id.tvAlertTime)).setText(cursor.getString(1));
-
-                // on:off
-                Switch onOff = (Switch)callListCell.findViewById(R.id.swStatus);
-                switch (cursor.getInt(3)) {
-                    case 0:
-                        ((Switch)callListCell.findViewById(R.id.swStatus)).setChecked(true);
-                        break;
-                    case 1:
-                        ((Switch)callListCell.findViewById(R.id.swStatus)).setChecked(false);
-                        break;
-                }
-
-                onOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        db.execSQL("UPDATE alert_set_table SET status = ? WHERE id = ?", new Integer[]{(isChecked ? 0 : 1), count});
-                    }
-                });
-                llCallList.addView(callListCell);
-
-                findViewById(R.id.ivTrash).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        final Dialog dialog = new Dialog(MainActivity.this);
-                        // タイトル非表示
-                        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-                        // フルスクリーン
-                        dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
-                        dialog.setContentView(R.layout.dialog_alarm_delete);
-
-                        // OK ボタンのリスナ
-                        dialog.findViewById(R.id.bOk).setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                dialog.dismiss();
-                                deleteAlarm(db, 0);
-                                callListCell.removeAllViews();
-
-                            }
-                        });
-                        // Close ボタンのリスナ
-                        dialog.findViewById(R.id.bNo).setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                dialog.dismiss();
-                            }
-                        });
-                        dialog.show();
-                    }
-                });
-
-
-
-
-                cursor.moveToNext();
-            }
-        }
-
+        showAlarmList();
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -175,20 +82,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // アラームの取り消し
-        LinearLayout btn2 = (LinearLayout)this.findViewById(R.id.llNextCall);
-        btn2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent indent = new Intent(getApplicationContext(), AlarmBroadcastReceiver.class);
-                PendingIntent pending = PendingIntent.getBroadcast(getApplicationContext(), bid1, indent, 0);
-
-                // アラームを解除する
-                AlarmManager am = (AlarmManager) MainActivity.this.getSystemService(ALARM_SERVICE);
-                am.cancel(pending);
-                Toast.makeText(getApplicationContext(), "Cancel ALARM 1", Toast.LENGTH_SHORT).show();
-            }
-        });
 
         findViewById(R.id.llNoSetting).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -243,48 +136,149 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void deleteAlarm(SQLiteDatabase db, int alarmId) {
-        db.execSQL("DELETE FROM alert_set_table WHERE id = ?", new Integer[] {alarmId});
-    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
+    /*
+     * 一覧を表示する
+     */
+    public void showAlarmList() {
+        // DB呼び出し
+        final SQLiteDatabase db = MyDBHelper.getInstance(MainActivity.this).getWritableDatabase();
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        final Cursor cursor = db.rawQuery("SELECT week, time, cat_type, status, id FROM alert_set_table ORDER BY id", null);
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_home) {
-            return true;
-        } else if (id == R.id.action_profile) {
-            Intent intent = new Intent(this, CatProfileActivity.class);
-            startActivity(intent);
-        } else if (id == R.id.action_settings) {
-            Intent intent = new Intent(this, AlermSettingActivity.class);
-            startActivity(intent);
-        } else if ( id == R.id.test_tap) {
-            Intent intent = new Intent(this, TestTapActivity.class);
-            startActivity(intent);
-        } else if ( id == R.id.test_shake) {
-            Intent intent = new Intent(this, TestShakeActivity.class);
-            startActivity(intent);
-        } else if ( id == R.id.test_swipe) {
-            Intent intent = new Intent(this, TestSwipeActivity.class);
-            startActivity(intent);
-        } else if ( id == R.id.test_fling) {
-            Intent intent = new Intent(this, TestFlingActivity.class);
-            startActivity(intent);
+        if (cursor.moveToFirst()) {
+            for (int i = 0; i < cursor.getCount(); i++) {
+                final LinearLayout callListCell = (LinearLayout)inflater.inflate(R.layout.part_call_list, llCallList, false);
+                callListCell.setId(i);
+                final int count = i + 1;
+
+                Log.d("test week", cursor.getString(0));
+                String dbWeed = cursor.getString(0);
+
+                Log.d("test time", cursor.getString(1));
+                final String dbTime = cursor.getString(1);
+
+                Log.d("test cat_type", cursor.getString(2));
+                int dbCatType = cursor.getInt(2);
+
+                Log.d("test status", cursor.getString(3));
+                int dbStatus = cursor.getInt(3);
+
+                Log.d("test id", cursor.getString(4));
+                final int dbId = cursor.getInt(4);
+
+                Log.d("test ", "---------------");
+
+                switch (dbCatType) {
+                    case 0:
+                        // 名前
+                        ((TextView)callListCell.findViewById(R.id.tvCatStaff)).setText(catArray[0]);
+                        // 画像
+                        ((ImageView)callListCell.findViewById(R.id.ivCatImage)).setImageResource(R.mipmap.taro);
+                        break;
+                }
+
+
+                // 時間
+                ((TextView)callListCell.findViewById(R.id.tvAlertTime)).setText(dbTime);
+
+                // on:off
+                Switch onOff = (Switch)callListCell.findViewById(R.id.swStatus);
+                switch (dbStatus) {
+                    case 0:
+                        ((Switch)callListCell.findViewById(R.id.swStatus)).setChecked(true);
+                        break;
+                    case 1:
+                        ((Switch)callListCell.findViewById(R.id.swStatus)).setChecked(false);
+                        break;
+                }
+
+                onOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        db.execSQL("UPDATE alert_set_table SET status = ? WHERE id = ?", new Integer[]{(isChecked ? 0 : 1), count});
+
+                        // off->onにしたら
+                        if (isChecked) {
+                            setAlarm(dbId, dbTime);
+                        } else {
+                            canselAlarm(dbId);
+                        }
+                        Log.d("test update switch is ", dbTime);
+                    }
+                });
+                llCallList.addView(callListCell);
+
+                ((ImageView)callListCell.findViewById(R.id.ivTrash)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        final Dialog dialog = new Dialog(MainActivity.this);
+                        // タイトル非表示
+                        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+                        // フルスクリーン
+                        dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
+                        dialog.setContentView(R.layout.dialog_alarm_delete);
+
+                        // OK ボタンのリスナ
+                        dialog.findViewById(R.id.bOk).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                                deleteAlarm(db, dbId);
+                                callListCell.removeAllViews();
+
+                            }
+                        });
+                        // Close ボタンのリスナ
+                        dialog.findViewById(R.id.bNo).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                            }
+                        });
+                        dialog.show();
+                    }
+                });
+
+
+                cursor.moveToNext();
+            }
         }
 
-        return super.onOptionsItemSelected(item);
+    }
+
+
+    /*
+     * アラームを設定する
+     */
+    public void setAlarm(int alarmId, String time) {
+        String[] times = time.split(":", 0);
+        AlermSettingUtils.setAlarm(MainActivity.this, alarmId, times);
+    }
+
+    /*
+     * アラームを解除する
+     */
+    public void canselAlarm(int alarmId) {
+        Intent indent = new Intent(getApplicationContext(), AlarmBroadcastReceiver.class);
+        PendingIntent pending = PendingIntent.getBroadcast(getApplicationContext(), alarmId, indent, 0);
+
+        // アラームを解除する
+        AlarmManager am = (AlarmManager) MainActivity.this.getSystemService(ALARM_SERVICE);
+        am.cancel(pending);
+    }
+
+    /*
+     * アラームを削除する
+     */
+    public void deleteAlarm(SQLiteDatabase db, int alarmId) {
+        Log.d("test delete alerm id is ", Integer.toString(alarmId));
+        db.execSQL("DELETE FROM alert_set_table WHERE id = ?", new Integer[] {alarmId});
+        // 再描画
+        canselAlarm(alarmId);
+        llCallList.removeAllViews();
+        showAlarmList();
     }
 
     public class CropSquareTransformation implements Transformation {

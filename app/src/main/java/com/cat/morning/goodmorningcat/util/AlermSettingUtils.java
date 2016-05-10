@@ -10,7 +10,10 @@ import android.util.Log;
 
 import com.cat.morning.goodmorningcat.AlarmBroadcastReceiver;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class AlermSettingUtils {
 
@@ -19,7 +22,7 @@ public class AlermSettingUtils {
         Cursor cs = db.rawQuery("SELECT MAX(id) FROM alert_set_table ", null);
         cs.moveToLast();
 
-        int requestCode = cs.getInt(0); // pendingIntent登録用requestCode
+        int requestCode = cs.getInt(0); // pendingIntent登録用requestCode（requestCode = alarmId）
         Log.d("test requestCode is ", Integer.toString(requestCode));
         cs.close();
 
@@ -50,7 +53,7 @@ public class AlermSettingUtils {
         // もし新規登録だったら、DBに登録されている数の次の数をrequestCodeにする. 登録済みのやつの編集なら、そのIDをrequestCodeに使用する
         PendingIntent pendingIntent = PendingIntent.getBroadcast(activity, requestCode, intent, 0);
 
-        // アラームをセットする
+        // アラームをセットする(Mainに戻ったら登録されるが、一応セットしとく)
         AlarmManager alarmManager = (AlarmManager) activity.getSystemService(activity.ALARM_SERVICE);
 
         alarmManager.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pendingIntent);
@@ -58,5 +61,14 @@ public class AlermSettingUtils {
 
     }
 
+
+    /**
+     * 現在日時をHH:mm形式で取得する.<br>
+     */
+    public static String getNowTime(){
+        final DateFormat df = new SimpleDateFormat("HH:mm");
+        final Date date = new Date(System.currentTimeMillis());
+        return df.format(date);
+    }
 
 }

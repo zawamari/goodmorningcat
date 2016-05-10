@@ -6,7 +6,6 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -21,7 +20,8 @@ import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import com.cat.morning.goodmorningcat.util.AlermSettingUtils;
-import com.squareup.picasso.Transformation;
+
+import java.util.ArrayList;
 
 import io.repro.android.Repro;
 
@@ -30,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     LinearLayout llCallList;
     LayoutInflater inflater;
     String[] catArray = {"みけこ"};
+    String nowTime;
+    ArrayList setTimeArray;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,20 +62,27 @@ public class MainActivity extends AppCompatActivity {
 
         llCallList = (LinearLayout)findViewById(R.id.llCallList);
 
+        Log.d("test now time is ", AlermSettingUtils.getNowTime());
+        nowTime = AlermSettingUtils.getNowTime();
+
+        // 一度全てのアラームを解除
+        canselAllAlarm();
+
+        // アラームリストを表示、この中でアラームを全てセット
         showAlarmList();
+
+
+        checkNextCall(setTimeArray);
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 Intent intent = new Intent(MainActivity.this, AlermSettingActivity.class);
                 startActivityForResult(intent, 0);
-
             }
         });
-
 
         findViewById(R.id.llNoSetting).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,7 +91,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
 
         findViewById(R.id.ivTop).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -144,22 +152,11 @@ public class MainActivity extends AppCompatActivity {
                 callListCell.setId(i);
                 final int count = i + 1;
 
-                Log.d("test week", cursor.getString(0));
                 String dbWeed = cursor.getString(0);
-
-                Log.d("test time", cursor.getString(1));
                 final String dbTime = cursor.getString(1);
-
-                Log.d("test cat_type", cursor.getString(2));
                 int dbCatType = cursor.getInt(2);
-
-                Log.d("test status", cursor.getString(3));
                 int dbStatus = cursor.getInt(3);
-
-                Log.d("test id", cursor.getString(4));
                 final int dbId = cursor.getInt(4);
-
-                Log.d("test ", "---------------");
 
                 switch (dbCatType) {
                     case 0:
@@ -170,7 +167,6 @@ public class MainActivity extends AppCompatActivity {
                         break;
                 }
 
-
                 // 時間
                 ((TextView)callListCell.findViewById(R.id.tvAlertTime)).setText(dbTime);
 
@@ -179,9 +175,12 @@ public class MainActivity extends AppCompatActivity {
                 switch (dbStatus) {
                     case 0:
                         ((Switch)callListCell.findViewById(R.id.swStatus)).setChecked(true);
+                        setAlarm(dbId, dbTime);
+                        setTimeArray.add(dbTime);
                         break;
                     case 1:
                         ((Switch)callListCell.findViewById(R.id.swStatus)).setChecked(false);
+                        canselAlarm(dbId);
                         break;
                 }
 
@@ -196,7 +195,6 @@ public class MainActivity extends AppCompatActivity {
                         } else {
                             canselAlarm(dbId);
                         }
-                        Log.d("test update switch is ", dbTime);
                     }
                 });
                 llCallList.addView(callListCell);
@@ -241,13 +239,56 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /*
+     *
+     */
+    public void checkNextCall(ArrayList setTimeArray){
+
+//        String[] setTimes = setTime.split(":", 0);
+        String[] nowTimes = nowTime.split(":", 0);
+
+//        if (Integer.parseInt(setTimes[0]) >= Integer.parseInt(nowTimes[0])) {
+//            if (Integer.parseInt(setTimes[0]) > Integer.parseInt(nowTimes[0])) {
+//                ((TextView)findViewById(R.id.tvNextCallTime)).setText(setTime);
+//            }
+//        }
+
+    }
+
 
     /*
      * アラームを設定する
      */
     public void setAlarm(int alarmId, String time) {
         String[] times = time.split(":", 0);
+        Log.d("test set", time);
         AlermSettingUtils.setAlarm(MainActivity.this, alarmId, times);
+    }
+
+    /*
+     * 全アラームを解除する
+     */
+    public void canselAllAlarm() {
+        final SQLiteDatabase db = MyDBHelper.getInstance(MainActivity.this).getWritableDatabase();
+
+        final Cursor cursor = db.rawQuery("SELECT id FROM alert_set_table ORDER BY id", null);
+
+        if (cursor.moveToFirst()) {
+            for (int i = 0; i < cursor.getCount(); i++) {
+                final int alarmId = cursor.getInt(0);
+                Intent indent = new Intent(getApplicationContext(), AlarmBroadcastReceiver.class);
+                PendingIntent pending = PendingIntent.getBroadcast(getApplicationContext(), alarmId, indent, 0);
+
+                // アラームを解除する
+                AlarmManager am = (AlarmManager) MainActivity.this.getSystemService(ALARM_SERVICE);
+                am.cancel(pending);
+
+                Log.d("test cancel", Integer.toString(alarmId));
+
+                cursor.moveToNext();
+            }
+            cursor.close();
+        }
     }
 
     /*
@@ -274,18 +315,4 @@ public class MainActivity extends AppCompatActivity {
         showAlarmList();
     }
 
-//    public class CropSquareTransformation implements Transformation {
-//        @Override public Bitmap transform(Bitmap source) {
-//            int size = Math.min(source.getWidth(), source.getHeight());
-//            int x = (source.getWidth() - size) / 2;
-//            int y = (source.getHeight() - size) / 2;
-//            Bitmap result = Bitmap.createBitmap(source, x, y, size, size);
-//            if (result != source) {
-//                source.recycle();
-//            }
-//            return result;
-//        }
-//
-//        @Override public String key() { return "square()"; }
-//    }
 }

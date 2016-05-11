@@ -61,7 +61,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
                 android:layout_gravity="center"
-                android:text="7:00"
+                android:text="-- : --"
                 android:textStyle="bold"
                 android:textSize="50sp"/>
 
@@ -130,6 +130,10 @@
                         android:src="@drawable/ico_trash"/>
 
                 </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp" />
 
             </LinearLayout>
 

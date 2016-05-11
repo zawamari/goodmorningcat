@@ -20,9 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import com.cat.morning.goodmorningcat.util.AlermSettingUtils;
-
-import java.util.ArrayList;
-
+import java.util.Calendar;
 import io.repro.android.Repro;
 
 public class MainActivity extends AppCompatActivity {
@@ -31,7 +29,9 @@ public class MainActivity extends AppCompatActivity {
     LayoutInflater inflater;
     String[] catArray = {"みけこ"};
     String nowTime;
-    ArrayList setTimeArray;
+
+    public static final int SET_ON = 0;
+    public static final int SET_OFF = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
 
         llCallList = (LinearLayout)findViewById(R.id.llCallList);
 
-        Log.d("test now time is ", AlermSettingUtils.getNowTime());
         nowTime = AlermSettingUtils.getNowTime();
 
         // 一度全てのアラームを解除
@@ -70,10 +69,6 @@ public class MainActivity extends AppCompatActivity {
 
         // アラームリストを表示、この中でアラームを全てセット
         showAlarmList();
-
-
-        checkNextCall(setTimeArray);
-
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -136,7 +131,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     /*
      * 一覧を表示する
      */
@@ -144,15 +138,14 @@ public class MainActivity extends AppCompatActivity {
         // DB呼び出し
         final SQLiteDatabase db = MyDBHelper.getInstance(MainActivity.this).getWritableDatabase();
 
-        final Cursor cursor = db.rawQuery("SELECT week, time, cat_type, status, id FROM alert_set_table ORDER BY id", null);
+        final Cursor cursor = db.rawQuery("SELECT week, time, cat_type, status, id FROM alert_set_table ORDER BY time", null);
 
         if (cursor.moveToFirst()) {
             for (int i = 0; i < cursor.getCount(); i++) {
                 final LinearLayout callListCell = (LinearLayout)inflater.inflate(R.layout.part_call_list, llCallList, false);
                 callListCell.setId(i);
-                final int count = i + 1;
 
-                String dbWeed = cursor.getString(0);
+                // String dbWeed = cursor.getString(0);
                 final String dbTime = cursor.getString(1);
                 int dbCatType = cursor.getInt(2);
                 int dbStatus = cursor.getInt(3);
@@ -160,10 +153,8 @@ public class MainActivity extends AppCompatActivity {
 
                 switch (dbCatType) {
                     case 0:
-                        // 名前
-                        ((TextView)callListCell.findViewById(R.id.tvCatStaff)).setText(catArray[0]);
-                        // 画像
-                        ((ImageView)callListCell.findViewById(R.id.ivCatImage)).setImageResource(R.mipmap.taro);
+                        ((TextView)callListCell.findViewById(R.id.tvCatStaff)).setText(catArray[0]); // 名前
+                        ((ImageView)callListCell.findViewById(R.id.ivCatImage)).setImageResource(R.mipmap.taro); // 画像
                         break;
                 }
 
@@ -173,12 +164,11 @@ public class MainActivity extends AppCompatActivity {
                 // on:off
                 Switch onOff = (Switch)callListCell.findViewById(R.id.swStatus);
                 switch (dbStatus) {
-                    case 0:
+                    case SET_ON:
                         ((Switch)callListCell.findViewById(R.id.swStatus)).setChecked(true);
                         setAlarm(dbId, dbTime);
-                        setTimeArray.add(dbTime);
                         break;
-                    case 1:
+                    case SET_OFF:
                         ((Switch)callListCell.findViewById(R.id.swStatus)).setChecked(false);
                         canselAlarm(dbId);
                         break;
@@ -187,14 +177,14 @@ public class MainActivity extends AppCompatActivity {
                 onOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        db.execSQL("UPDATE alert_set_table SET status = ? WHERE id = ?", new Integer[]{(isChecked ? 0 : 1), count});
+                        db.execSQL("UPDATE alert_set_table SET status = ? WHERE id = ?", new Integer[]{(isChecked ? 0 : 1), dbId});
 
-                        // off->onにしたら
-                        if (isChecked) {
+                        if (isChecked) { // off->onにしたら
                             setAlarm(dbId, dbTime);
-                        } else {
+                        } else { // on->off
                             canselAlarm(dbId);
                         }
+                        checkNextCall();
                     }
                 });
                 llCallList.addView(callListCell);
@@ -206,6 +196,7 @@ public class MainActivity extends AppCompatActivity {
                         final Dialog dialog = new Dialog(MainActivity.this);
                         // タイトル非表示
                         dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+
                         // フルスクリーン
                         dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
                         dialog.setContentView(R.layout.dialog_alarm_delete);
@@ -230,11 +221,13 @@ public class MainActivity extends AppCompatActivity {
                         dialog.show();
                     }
                 });
-
-
                 cursor.moveToNext();
             }
         }
+
+        // 次に呼ばれる時間を決める
+        checkNextCall();
+
         cursor.close();
 
     }
@@ -242,17 +235,63 @@ public class MainActivity extends AppCompatActivity {
     /*
      *
      */
-    public void checkNextCall(ArrayList setTimeArray){
+    public void checkNextCall(){
 
-//        String[] setTimes = setTime.split(":", 0);
+        final SQLiteDatabase db = MyDBHelper.getInstance(MainActivity.this).getWritableDatabase();
+        final Cursor cursor = db.rawQuery("SELECT week, time, cat_type, status, id FROM alert_set_table ORDER BY time", null);
+
+        // 現在時刻を取得
         String[] nowTimes = nowTime.split(":", 0);
+        Calendar nowCal = Calendar.getInstance();
+        nowCal.set(2016, 0, 1, Integer.parseInt(nowTimes[0]), Integer.parseInt(nowTimes[1]), 00);
 
-//        if (Integer.parseInt(setTimes[0]) >= Integer.parseInt(nowTimes[0])) {
-//            if (Integer.parseInt(setTimes[0]) > Integer.parseInt(nowTimes[0])) {
-//                ((TextView)findViewById(R.id.tvNextCallTime)).setText(setTime);
-//            }
-//        }
+        String nearTime = "-- : --";
 
+        boolean setTimeFlg = false;
+
+        cursor.moveToFirst();
+
+        for (int i = 0; i < cursor.getCount(); i++) {
+
+            if (!setTimeFlg) {
+
+                if (cursor.getInt(3) ==  SET_OFF ) {
+                    cursor.moveToNext();
+                    continue;
+                }
+
+                String[] setTimes = cursor.getString(1).split(":", 0);
+
+                Calendar setTimeCal = Calendar.getInstance();
+                setTimeCal.set(2016, 0, 1, Integer.parseInt(setTimes[0]), Integer.parseInt(setTimes[1]), 00);
+
+
+                // 2つの日時を比較
+                int diff = setTimeCal.compareTo(nowCal);
+                if (diff > 0) {
+                    nearTime = cursor.getString(1);
+                    setTimeFlg = !setTimeFlg;
+                    break;
+                }
+            }
+            cursor.moveToNext();
+        }
+
+        // もし未来の予定がなかったら、いちばんon担っている早い時刻をセットする
+        if (!setTimeFlg) {
+            if (cursor.moveToFirst()) {
+                for (int i = 0; i < cursor.getCount(); i++) {
+                    if (cursor.getInt(3) == SET_OFF) {
+                        cursor.moveToNext();
+                        continue;
+                    }
+                    nearTime = cursor.getString(1);
+                    break;
+                }
+            }
+        }
+        cursor.close();
+        ((TextView)findViewById(R.id.tvNextCallTime)).setText(nearTime);
     }
 
 
@@ -283,7 +322,7 @@ public class MainActivity extends AppCompatActivity {
                 AlarmManager am = (AlarmManager) MainActivity.this.getSystemService(ALARM_SERVICE);
                 am.cancel(pending);
 
-                Log.d("test cancel", Integer.toString(alarmId));
+                Log.d("test all cancel", Integer.toString(alarmId));
 
                 cursor.moveToNext();
             }
@@ -307,7 +346,6 @@ public class MainActivity extends AppCompatActivity {
      * アラームを削除する
      */
     public void deleteAlarm(SQLiteDatabase db, int alarmId) {
-        Log.d("test delete id is ", Integer.toString(alarmId));
         db.execSQL("DELETE FROM alert_set_table WHERE id = ?", new Integer[] {alarmId});
         // 再描画
         canselAlarm(alarmId);

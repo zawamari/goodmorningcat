@@ -7,6 +7,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -179,7 +187,15 @@ MediaPlayer mp;
                 switch (dbCatType) {
                     case 0:
                         ((TextView)callListCell.findViewById(R.id.tvCatStaff)).setText(catArray[0]); // 名前
-                        ((ImageView)callListCell.findViewById(R.id.ivCatImage)).setImageResource(R.mipmap.taro); // 画像
+                        ((ImageView)callListCell.findViewById(R.id.ivCatImage)).setImageBitmap(
+                                getCroppedBitmap(
+                                        BitmapFactory.decodeResource(
+                                                this.getResources(),
+                                                R.mipmap.taro,
+                                                null
+                                        )
+                                )
+                        );
                         break;
                 }
 
@@ -392,5 +408,27 @@ MediaPlayer mp;
         llCallList.removeAllViews();
         showAlarmList();
     }
+
+    public Bitmap getCroppedBitmap(Bitmap bitmap) {
+
+        int width  = bitmap.getWidth();
+        int height = bitmap.getHeight();
+
+        final Rect rect   = new Rect(0, 0, width, height);
+        final RectF rectf = new RectF(0, 0, width, height);
+
+        Bitmap output = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        final Paint paint = new Paint();
+        paint.setAntiAlias(true);
+
+        canvas.drawRoundRect(rectf, width / 2, height / 2, paint);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+        return output;
+
+    }
+
 
 }

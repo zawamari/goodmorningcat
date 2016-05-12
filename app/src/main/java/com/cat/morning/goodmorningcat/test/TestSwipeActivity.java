@@ -71,7 +71,7 @@ public class TestSwipeActivity extends Activity {
             if (isManner == ON && mp == null) {
                 mp = MediaPlayer.create(this, R.raw.cat1);
                 mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                mp.setVolume(1.0f, 1.0f); // 0.1f ~ 1.0f
+                mp.setVolume(0.1f, 0.1f); // 0.1f ~ 1.0f
                 mp.setLooping(true);
                 mp.start();
             }

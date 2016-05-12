@@ -2,11 +2,14 @@ package com.cat.morning.goodmorningcat;
 
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -14,11 +17,41 @@ import com.cat.morning.goodmorningcat.util.AlermSettingUtils;
 
 public class AlermSettingActivity extends AppCompatActivity {
 
+    private static final int NO_SETTING = 99;
+
+    private int id;
+    private String time;
+    private int volume = NO_SETTING;
+    private int manner = NO_SETTING;
+    private int vibrate = NO_SETTING;
+    private int status = NO_SETTING;
+    private boolean updateAlarm = false;
+
+    private int setVolume = 3;
+    private int setVibrator = 0;
+    private int setManner = 0;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alerm_setting);
 
+        Intent intent = getIntent();
+        if (intent.getIntExtra("id", 0) != 0) {
+            id = intent.getIntExtra("id", 0);
+            updateAlarm = true;
+
+            final SQLiteDatabase db = MyDBHelper.getInstance(AlermSettingActivity.this).getWritableDatabase();
+            final Cursor cursor = db.rawQuery("SELECT time, volume, manner, vibrate, status, cat_type FROM alert_set_table WHERE id = ?", new String[]{Integer.toString(id)});
+            if (cursor.moveToFirst()) {
+                time = cursor.getString(0);
+                volume = cursor.getInt(1);
+                manner = cursor.getInt(2);
+                vibrate = cursor.getInt(3);
+                status = cursor.getInt(4);
+            }
+        }
 
         /*
          * 猫選択
@@ -123,7 +156,74 @@ public class AlermSettingActivity extends AppCompatActivity {
                 }, 13, 0, true).show();
             }
         });
+        if (time != null) {
+            tvTime.setText(time);
+        }
 
+        /*
+         * 音量
+         */
+
+
+
+
+        /*
+         * バイブレーション
+         */
+        final Switch swVibrator = (Switch)findViewById(R.id.swVibrator);
+
+        if (vibrate != NO_SETTING) {
+            switch (vibrate) {
+                case 0: //on
+                    swVibrator.setChecked(true);
+                    break;
+                case 1:
+                    swVibrator.setChecked(false);
+                    setVibrator = 1;
+                    break;
+            }
+        }
+
+        swVibrator.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    setVibrator = 0;
+                } else {
+                    setVibrator = 1;
+                }
+            }
+        });
+
+
+        /*
+         * マナーモード
+         */
+        final Switch swManner = (Switch)findViewById(R.id.swManner);
+
+        if (manner != NO_SETTING) {
+            switch (manner) {
+                case 0: //on
+                    swManner.setChecked(true);
+                    setManner = 0;
+                    break;
+                case 1:
+                    swManner.setChecked(false);
+                    setManner = 1;
+                    break;
+            }
+        }
+
+        swManner.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    setManner = 0;
+                } else {
+                    setManner = 1;
+                }
+            }
+        });
 
 
         /*
@@ -136,7 +236,19 @@ public class AlermSettingActivity extends AppCompatActivity {
                 // DBに登録する
                 String tvTime = ((TextView) findViewById(R.id.tvTime)).getText().toString();
                 SQLiteDatabase db = MyDBHelper.getInstance(AlermSettingActivity.this).getWritableDatabase();
-                db.execSQL("INSERT INTO alert_set_table (week, time, vibrate) VALUES ('月曜',?, 0)", new String[]{tvTime});
+
+                Log.d("test update time", tvTime);
+                Log.d("test update volume", Integer.toString(setVolume));
+                Log.d("test update vibrate", Integer.toString(setVibrator));
+                Log.d("test update manner", Integer.toString(setManner));
+
+                if (updateAlarm) {
+                    db.execSQL("UPDATE alert_set_table SET time = ?, volume = ?, vibrate = ?, manner = ?, status = ? WHERE id = ?",
+                            new String[]{tvTime, Integer.toString(setVolume), Integer.toString(setVibrator), Integer.toString(setManner), Integer.toString(status), Integer.toString(id)});
+                } else {
+                    db.execSQL("INSERT INTO alert_set_table (week, time, volume, vibrate, manner) VALUES ('月曜',?, ?, ?, ?)",
+                            new String[]{tvTime, Integer.toString(setVolume), Integer.toString(setVibrator), Integer.toString(setManner)});
+                }
                 // 曜日は今後のために残しておく
 
                 /*  アラート登録時はONの状態なので、アラートをセットする。 */

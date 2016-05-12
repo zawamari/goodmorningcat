@@ -172,8 +172,8 @@ MediaPlayer mp;
 
                 // String dbWeed = cursor.getString(0);
                 final String dbTime = cursor.getString(1);
-                int dbCatType = cursor.getInt(2);
-                int dbStatus = cursor.getInt(3);
+                final int dbCatType = cursor.getInt(2);
+                final int dbStatus = cursor.getInt(3);
                 final int dbId = cursor.getInt(4);
 
                 switch (dbCatType) {
@@ -246,6 +246,21 @@ MediaPlayer mp;
                         dialog.show();
                     }
                 });
+
+                callListCell.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.d("test time",dbTime);
+                        Log.d("test cat",Integer.toString(dbCatType));
+                        Log.d("test id",Integer.toString(dbId));
+
+                        Intent intent = new Intent(getApplicationContext(), AlermSettingActivity.class);
+                        intent.putExtra("id", dbId);
+                        startActivity(intent);
+
+                    }
+                });
+
                 cursor.moveToNext();
             }
         }

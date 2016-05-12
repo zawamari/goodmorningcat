@@ -100,6 +100,7 @@
             android:text="音量"/>
 
         <Spinner
+            android:id="@+id/spVolum"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
@@ -126,11 +127,12 @@
             android:layout_weight="1"
             android:text="バイブレーション"/>
 
-        <Spinner
+        <Switch
+            android:id="@+id/swVibrator"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:checked="true"/>
 
-        </Spinner>
 
     </LinearLayout>
 
@@ -152,11 +154,11 @@
             android:layout_weight="1"
             android:text="マナーモード設定"/>
 
-        <Spinner
+        <Switch
+            android:id="@+id/swManner"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-        </Spinner>
+            android:layout_height="wrap_content"
+            android:checked="true"/>
 
     </LinearLayout>
 

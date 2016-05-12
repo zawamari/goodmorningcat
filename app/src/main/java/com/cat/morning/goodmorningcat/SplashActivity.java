@@ -6,9 +6,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.Window;
 
-/**
- * Created by inai_marie on 2016/03/31.
- */
 public class SplashActivity extends Activity {
 
     @Override
@@ -19,7 +16,7 @@ public class SplashActivity extends Activity {
         setContentView(R.layout.activity_splash);
 
         Handler handler = new Handler();
-        handler.postDelayed(new splashRunnable(), 2000);
+        handler.postDelayed(new splashRunnable(), 1500);
     }
 
     class splashRunnable implements Runnable {

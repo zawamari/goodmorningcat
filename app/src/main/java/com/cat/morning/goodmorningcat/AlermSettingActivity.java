@@ -334,6 +334,32 @@ public class AlermSettingActivity extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.ivTimeSet).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(AlermSettingActivity.this, AlermSettingActivity.class);
+                startActivity(intent);
+                AlermSettingActivity.this.finish();
+            }
+        });
+
+        findViewById(R.id.ivCatList).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(AlermSettingActivity.this, CatListActivity.class);
+                startActivity(intent);
+                AlermSettingActivity.this.finish();
+            }
+        });
+
+        findViewById(R.id.ivSetting).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(AlermSettingActivity.this, SettingActivity.class);
+                startActivity(intent);
+                AlermSettingActivity.this.finish();
+            }
+        });
     }
 
 }

@@ -23,7 +23,6 @@ android {
 dependencies {
     compile 'io.repro:repro-android-sdk:1.1.14'
     compile 'com.google.android.gms:play-services-gcm:8.1.0'
-    compile 'com.squareup.picasso:picasso:2.5.2'
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'

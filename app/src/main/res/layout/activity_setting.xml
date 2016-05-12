@@ -50,6 +50,7 @@
         android:textColor="@color/black" />
 
     <TextView
+        android:id="@+id/tvLicense"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_marginLeft="16dp"

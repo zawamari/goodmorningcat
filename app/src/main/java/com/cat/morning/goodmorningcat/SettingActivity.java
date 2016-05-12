@@ -46,5 +46,13 @@ public class SettingActivity extends Activity {
             }
         });
 
+        findViewById(R.id.tvLicense).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SettingActivity.this, LicenseActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 }

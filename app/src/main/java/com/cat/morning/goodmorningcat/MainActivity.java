@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.ivCatList).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, CatProfileActivity.class);
+                Intent intent = new Intent(MainActivity.this, CatListActivity.class);
                 startActivity(intent);
                 MainActivity.this.finish();
             }

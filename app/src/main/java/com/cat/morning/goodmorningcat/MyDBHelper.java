@@ -32,7 +32,7 @@ public class MyDBHelper extends SQLiteOpenHelper {
                         + "id  INTEGER PRIMARY KEY AUTOINCREMENT , "
                         + "week BLOB NOT NULL, "                // 曜日
                         + "time TEXT NOT NULL, "                // 時間
-                        + "vibrate INTEGER NOT NULL, "          // バイブレーション
+                        + "vibrate INTEGER NOT NULL, "          // バイブレーション 0:有効 1:無効
                         + "cat_type INTEGER NOT NULL DEFAULT 0, "
                         + "status INTEGER NOT NULL DEFAULT 0, "  // status 0:有効 1:無効
                         + "manner INTEGER NOT NULL DEFAULT 0, "  // マナーモード： 0:マナーモードでも音を鳴らす 1:マナーモードなら音を鳴らさない

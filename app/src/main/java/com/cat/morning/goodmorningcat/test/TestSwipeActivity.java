@@ -1,11 +1,14 @@
 package com.cat.morning.goodmorningcat.test;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,9 +25,15 @@ import java.util.TimerTask;
 
 public class TestSwipeActivity extends Activity {
 
-    ProgressBar pb;
+    private ProgressBar pb;
     private MediaPlayer mp;
-    int dbId;
+    private int dbId;
+    private Vibrator vib;
+    private long pattern[] = {100, 2000, 1000 }; // 0.1秒待って2秒振動,1秒停止
+    private static final int ON = 0;
+    private static final int OFF = 1;
+
+    private int isVibrate;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -49,18 +58,36 @@ public class TestSwipeActivity extends Activity {
 
 
         final SQLiteDatabase db = MyDBHelper.getInstance(TestSwipeActivity.this).getWritableDatabase();
-        final Cursor cursor = db.rawQuery("SELECT week, time, cat_type, status, id FROM alert_set_table WHERE id = ?", new String[]{Integer.toString(dbId)});
+        final Cursor cursor = db.rawQuery("SELECT manner, vibrate, cat_type, status FROM alert_set_table WHERE id = ?", new String[]{Integer.toString(dbId)});
 
         if (cursor.moveToFirst()) {
 
+            int isManner = cursor.getInt(0);
+            isVibrate = cursor.getInt(1);
+
+
 
             // 音を鳴らす
-            if (mp == null) {
+            if (isManner == ON && mp == null) {
                 mp = MediaPlayer.create(this, R.raw.cat1);
+                mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                mp.setVolume(1.0f, 1.0f); // 0.1f ~ 1.0f
                 mp.setLooping(true);
                 mp.start();
             }
 
+            AudioManager manager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+
+            int maxVol = manager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+            int vol = manager.getStreamVolume(AudioManager.STREAM_MUSIC);
+
+
+            // バイブレーション
+
+            if (isVibrate == ON) {
+                vib = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+                vib.vibrate(pattern, 0); // 設定したパターンを繰り返す
+            }
 
             pb = (ProgressBar) findViewById(R.id.ProgressBar01);
 
@@ -147,6 +174,7 @@ public class TestSwipeActivity extends Activity {
             mp.stop();
             mp.release();
         }
+        if (isVibrate == ON) vib.cancel();
     }
 
     @Override

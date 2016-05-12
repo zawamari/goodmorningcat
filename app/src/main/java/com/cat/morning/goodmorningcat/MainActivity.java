@@ -3,9 +3,12 @@ package com.cat.morning.goodmorningcat;
 import android.app.AlarmManager;
 import android.app.Dialog;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -120,11 +123,28 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, SettingActivity.class);
                 startActivity(intent);
                 MainActivity.this.finish();
+//                AudioManager manager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+//
+//                int maxVol = manager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+//                int vol = manager.getStreamVolume(AudioManager.STREAM_MUSIC);
+//                Log.d("test", "最大音量：" + Integer.toString(maxVol) + ", 現在音量;" + Integer.toString(vol));
+//
+//                if (testflg) {
+//                    mp = MediaPlayer.create(MainActivity.this, R.raw.cat1);
+//                    mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
+//                    mp.setVolume(1.0f, 1.0f); // 0.1f ~ 1.0f
+//                    mp.setLooping(true);
+//                    mp.start();
+//                    testflg = false;
+//                } else {
+//                    mp.stop();
+//                    testflg = true;
+//                }
             }
         });
-
-
     }
+    boolean testflg = true;
+MediaPlayer mp;
 
     @Override
     protected void onResume() {

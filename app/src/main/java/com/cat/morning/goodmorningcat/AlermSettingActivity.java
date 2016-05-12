@@ -8,7 +8,10 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -27,6 +30,7 @@ public class AlermSettingActivity extends AppCompatActivity {
     private int status = NO_SETTING;
     private boolean updateAlarm = false;
 
+    private String spinnerVolumeValue = "";
     private int setVolume = 3;
     private int setVibrator = 0;
     private int setManner = 0;
@@ -161,9 +165,46 @@ public class AlermSettingActivity extends AppCompatActivity {
         }
 
         /*
-         * 音量
+         * 音量 TODO: とりあえず簡単に実装。
          */
+        Spinner spVolum = (Spinner)findViewById(R.id.spVolum);
 
+        ArrayAdapter<String> volumeAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
+        volumeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        volumeAdapter.add("小さい");
+        volumeAdapter.add("普通");
+        volumeAdapter.add("大きい");
+
+        spVolum.setAdapter(volumeAdapter);
+
+        if (volume != NO_SETTING) {
+            if (volume == 0) {
+                spVolum.setSelection(volume);
+                setVolume = 0;
+            } else if (volume == 3) {
+                spVolum.setSelection(1);
+                setVolume = 3;
+            } else {
+                spVolum.setSelection(2);
+                setVolume = 6;
+            }
+        } else {
+            spVolum.setSelection(1);
+        }
+        spVolum.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Spinner spinner = (Spinner) parent;
+                // 選択されたアイテムを取得します
+                spinnerVolumeValue = (String) spinner.getSelectedItem();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
 
 
@@ -236,6 +277,20 @@ public class AlermSettingActivity extends AppCompatActivity {
                 // DBに登録する
                 String tvTime = ((TextView) findViewById(R.id.tvTime)).getText().toString();
                 SQLiteDatabase db = MyDBHelper.getInstance(AlermSettingActivity.this).getWritableDatabase();
+
+                if (spinnerVolumeValue != "") {
+                    switch (spinnerVolumeValue) {
+                        case "小さい": //on
+                            setVolume = 0;
+                            break;
+                        case "普通":
+                            setVolume = 3;
+                            break;
+                        case "大きい":
+                            setVolume = 6;
+                            break;
+                    }
+                }
 
                 Log.d("test update time", tvTime);
                 Log.d("test update volume", Integer.toString(setVolume));

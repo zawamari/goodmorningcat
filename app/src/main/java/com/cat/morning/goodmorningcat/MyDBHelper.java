@@ -38,7 +38,7 @@ public class MyDBHelper extends SQLiteOpenHelper {
                         + "manner INTEGER NOT NULL DEFAULT 0, "  // マナーモード： 0:マナーモードでも音を鳴らす 1:マナーモードなら音を鳴らさない
                         + "limit_time INTEGER NOT NULL DEFAULT 0, "   // 音を鳴らす最大時間
                         + "snooze INTEGER NOT NULL DEFAULT 0, "  // スヌーズ 0;あり 1;なし
-                        + "volume INTEGER NOT NULL DEFAULT 3)");// ボリューム 0:なし 1; 2; 3;中間 4; 5;
+                        + "volume INTEGER NOT NULL DEFAULT 3)");// ボリューム 0:なし 1; 2; 3;中間 4; 5: 6:最大;
         db.execSQL(
                 "CREATE TABLE IF NOT EXISTS cat ("
                         + "id  INTEGER PRIMARY KEY AUTOINCREMENT , "

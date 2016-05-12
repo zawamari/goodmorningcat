@@ -34,6 +34,7 @@ public class TestSwipeActivity extends Activity {
     private static final int OFF = 1;
 
     private int isVibrate;
+    private int volume;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -58,20 +59,37 @@ public class TestSwipeActivity extends Activity {
 
 
         final SQLiteDatabase db = MyDBHelper.getInstance(TestSwipeActivity.this).getWritableDatabase();
-        final Cursor cursor = db.rawQuery("SELECT manner, vibrate, cat_type, status FROM alert_set_table WHERE id = ?", new String[]{Integer.toString(dbId)});
+        final Cursor cursor = db.rawQuery("SELECT manner, vibrate, volume, cat_type, status FROM alert_set_table WHERE id = ?", new String[]{Integer.toString(dbId)});
 
         if (cursor.moveToFirst()) {
 
             int isManner = cursor.getInt(0);
             isVibrate = cursor.getInt(1);
-
+            volume = cursor.getInt(2);
 
 
             // 音を鳴らす
             if (isManner == ON && mp == null) {
+
+                // TODO: 初期値設定について
+                float leftVol = 0.1f;
+                float rightVol = 0.1f;
+                // volume調整
+                if (volume == 0) {
+                    leftVol = 0.1f;
+                    rightVol = 0.1f;
+                } else if (volume == 3){
+                    leftVol = 0.5f;
+                    rightVol = 0.5f;
+                } else {
+                    leftVol = 1.0f;
+                    rightVol = 1.0f;
+                }
+
+
                 mp = MediaPlayer.create(this, R.raw.cat1);
                 mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                mp.setVolume(0.1f, 0.1f); // 0.1f ~ 1.0f
+                mp.setVolume(leftVol, rightVol); // 0.1f ~ 1.0f
                 mp.setLooping(true);
                 mp.start();
             }
@@ -82,7 +100,6 @@ public class TestSwipeActivity extends Activity {
             int vol = manager.getStreamVolume(AudioManager.STREAM_MUSIC);
 
 
-            // バイブレーション
 
             if (isVibrate == ON) {
                 vib = (Vibrator) getSystemService(VIBRATOR_SERVICE);

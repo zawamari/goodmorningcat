@@ -1,6 +1,5 @@
 package com.cat.morning.goodmorningcat;
 
-import android.app.AlarmManager;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
@@ -12,8 +11,6 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.cat.morning.goodmorningcat.util.AlermSettingUtils;
-
-import java.util.Calendar;
 
 public class AlermSettingActivity extends AppCompatActivity {
 
@@ -139,7 +136,7 @@ public class AlermSettingActivity extends AppCompatActivity {
                 // DBに登録する
                 String tvTime = ((TextView) findViewById(R.id.tvTime)).getText().toString();
                 SQLiteDatabase db = MyDBHelper.getInstance(AlermSettingActivity.this).getWritableDatabase();
-                db.execSQL("INSERT INTO alert_set_table (week, time, vibrate, cat_type, status) VALUES ('月曜',?, 0, 1, 0)", new String[]{tvTime});
+                db.execSQL("INSERT INTO alert_set_table (week, time, vibrate) VALUES ('月曜',?, 0)", new String[]{tvTime});
                 // 曜日は今後のために残しておく
 
                 /*  アラート登録時はONの状態なので、アラートをセットする。 */

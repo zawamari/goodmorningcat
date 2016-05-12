@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, AlermSettingActivity.class);
                 startActivityForResult(intent, 0);
+                MainActivity.this.finish();
             }
         });
 
@@ -84,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), AlermSettingActivity.class);
                 startActivity(intent);
+                MainActivity.this.finish();
             }
         });
 
@@ -99,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, AlermSettingActivity.class);
                 startActivity(intent);
+                MainActivity.this.finish();
             }
         });
 
@@ -107,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, CatProfileActivity.class);
                 startActivity(intent);
+                MainActivity.this.finish();
             }
         });
 
@@ -115,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, SettingActivity.class);
                 startActivity(intent);
+                MainActivity.this.finish();
             }
         });
 

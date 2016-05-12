@@ -7,9 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-/**
- * Created by inai_marie on 2016/03/30.
- */
 public class GCMReceiver extends io.repro.android.GCMReceiver {
 
     @Override

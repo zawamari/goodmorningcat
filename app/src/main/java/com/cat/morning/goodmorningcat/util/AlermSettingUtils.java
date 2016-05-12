@@ -48,11 +48,10 @@ public class AlermSettingUtils {
 
 
         Intent intent = new Intent(activity, AlarmBroadcastReceiver.class);
-        intent.putExtra("intentId", 2);
+        intent.putExtra("dbId", requestCode);
 
         // もし新規登録だったら、DBに登録されている数の次の数をrequestCodeにする. 登録済みのやつの編集なら、そのIDをrequestCodeに使用する
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(activity, requestCode, intent, 0);
-
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(activity, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         // アラームをセットする(Mainに戻ったら登録されるが、一応セットしとく)
         AlarmManager alarmManager = (AlarmManager) activity.getSystemService(activity.ALARM_SERVICE);
 

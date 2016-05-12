@@ -30,12 +30,15 @@ public class MyDBHelper extends SQLiteOpenHelper {
         db.execSQL(
                 "CREATE TABLE IF NOT EXISTS alert_set_table ("
                         + "id  INTEGER PRIMARY KEY AUTOINCREMENT , "
-                        + "week BLOB NOT NULL, " // 曜日
-                        + "time TEXT NOT NULL, "          // 時間
-                        + "vibrate INTEGER NOT NULL, " // バイブレーション
-                        + "cat_type INTEGER NOT NULL,"
-                        + "status INTEGER NOT NULL)");// status 0:有効 1:無効
-
+                        + "week BLOB NOT NULL, "                // 曜日
+                        + "time TEXT NOT NULL, "                // 時間
+                        + "vibrate INTEGER NOT NULL, "          // バイブレーション
+                        + "cat_type INTEGER NOT NULL DEFAULT 0, "
+                        + "status INTEGER NOT NULL DEFAULT 0, "  // status 0:有効 1:無効
+                        + "manner INTEGER NOT NULL DEFAULT 0, "  // マナーモード： 0:マナーモードでも音を鳴らす 1:マナーモードなら音を鳴らさない
+                        + "limit_time INTEGER NOT NULL DEFAULT 0, "   // 音を鳴らす最大時間
+                        + "snooze INTEGER NOT NULL DEFAULT 0, "  // スヌーズ 0;あり 1;なし
+                        + "volume INTEGER NOT NULL DEFAULT 3)");// ボリューム 0:なし 1; 2; 3;中間 4; 5;
         db.execSQL(
                 "CREATE TABLE IF NOT EXISTS cat ("
                         + "id  INTEGER PRIMARY KEY AUTOINCREMENT , "

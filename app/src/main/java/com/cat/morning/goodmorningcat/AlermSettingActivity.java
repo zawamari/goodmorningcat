@@ -20,6 +20,8 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.cat.morning.goodmorningcat.util.AlermSettingUtils;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 public class AlermSettingActivity extends AppCompatActivity {
 
@@ -42,6 +44,13 @@ public class AlermSettingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alerm_setting);
+
+        // Google AdMob
+        AdView mAdView = (AdView) findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("B849BBBCEBFDC32DCFC71B0DED769198")
+                .build();
+        mAdView.loadAd(adRequest);
 
         Intent intent = getIntent();
         if (intent.getIntExtra("id", 0) != 0) {

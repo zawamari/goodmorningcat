@@ -3,7 +3,6 @@ package com.cat.morning.goodmorningcat;
 import android.app.AlarmManager;
 import android.app.Dialog;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -15,12 +14,10 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -33,6 +30,8 @@ import android.widget.TextView;
 import com.cat.morning.goodmorningcat.util.AlermSettingUtils;
 import java.util.Calendar;
 import io.repro.android.Repro;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -68,6 +67,13 @@ public class MainActivity extends AppCompatActivity {
         Repro.setup("c5de83ed-5b81-42f3-83c8-bc92410147c0");
         Repro.enablePushNotification("662649025058");
 
+        // Google AdMob
+        AdView mAdView = (AdView) findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder()
+                                .addTestDevice("B849BBBCEBFDC32DCFC71B0DED769198")
+                                .build();
+        mAdView.loadAd(adRequest);
+
 
         inflater = getLayoutInflater();
 
@@ -87,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, AlermSettingActivity.class);
                 startActivityForResult(intent, 0);
-                MainActivity.this.finish();
+//                MainActivity.this.finish();
             }
         });
 
@@ -96,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), AlermSettingActivity.class);
                 startActivity(intent);
-                MainActivity.this.finish();
+//                MainActivity.this.finish();
             }
         });
 
@@ -112,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, AlermSettingActivity.class);
                 startActivity(intent);
-                MainActivity.this.finish();
+//                MainActivity.this.finish();
             }
         });
 
@@ -121,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, CatListActivity.class);
                 startActivity(intent);
-                MainActivity.this.finish();
+//                MainActivity.this.finish();
             }
         });
 
@@ -152,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     boolean testflg = true;
-MediaPlayer mp;
+    MediaPlayer mp;
 
     @Override
     protected void onResume() {
@@ -266,10 +272,6 @@ MediaPlayer mp;
                 callListCell.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Log.d("test time",dbTime);
-                        Log.d("test cat",Integer.toString(dbCatType));
-                        Log.d("test id",Integer.toString(dbId));
-
                         Intent intent = new Intent(getApplicationContext(), AlermSettingActivity.class);
                         intent.putExtra("id", dbId);
                         startActivity(intent);
@@ -283,9 +285,7 @@ MediaPlayer mp;
 
         // 次に呼ばれる時間を決める
         checkNextCall();
-
         cursor.close();
-
     }
 
     /*
@@ -356,7 +356,6 @@ MediaPlayer mp;
      */
     public void setAlarm(int alarmId, String time) {
         String[] times = time.split(":", 0);
-        Log.d("test set", time);
         AlermSettingUtils.setAlarm(MainActivity.this, alarmId, times);
     }
 
@@ -377,8 +376,6 @@ MediaPlayer mp;
                 // アラームを解除する
                 AlarmManager am = (AlarmManager) MainActivity.this.getSystemService(ALARM_SERVICE);
                 am.cancel(pending);
-
-                Log.d("test all cancel", Integer.toString(alarmId));
 
                 cursor.moveToNext();
             }
@@ -427,8 +424,5 @@ MediaPlayer mp;
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         canvas.drawBitmap(bitmap, rect, rect, paint);
         return output;
-
     }
-
-
 }

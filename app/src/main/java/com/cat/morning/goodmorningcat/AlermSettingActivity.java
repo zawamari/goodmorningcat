@@ -38,7 +38,6 @@ public class AlermSettingActivity extends AppCompatActivity {
     private int setVibrator = 0;
     private int setManner = 0;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -314,11 +313,6 @@ public class AlermSettingActivity extends AppCompatActivity {
                         }
                     }
 
-                    Log.d("test update time", tvTime);
-                    Log.d("test update volume", Integer.toString(setVolume));
-                    Log.d("test update vibrate", Integer.toString(setVibrator));
-                    Log.d("test update manner", Integer.toString(setManner));
-
                     if (updateAlarm) {
                         db.execSQL("UPDATE alert_set_table SET time = ?, volume = ?, vibrate = ?, manner = ?, status = ? WHERE id = ?",
                                 new String[]{tvTime, Integer.toString(setVolume), Integer.toString(setVibrator), Integer.toString(setManner), Integer.toString(status), Integer.toString(id)});
@@ -355,7 +349,6 @@ public class AlermSettingActivity extends AppCompatActivity {
                 swManner.setChecked(true);
             }
         });
-
 
 
         /*

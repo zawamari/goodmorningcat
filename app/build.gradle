@@ -21,6 +21,7 @@ android {
 }
 
 dependencies {
+    compile 'com.google.android.gms:play-services-ads:8.1.0'
     compile 'io.repro:repro-android-sdk:1.1.14'
     compile 'com.google.android.gms:play-services-gcm:8.1.0'
     compile fileTree(dir: 'libs', include: ['*.jar'])

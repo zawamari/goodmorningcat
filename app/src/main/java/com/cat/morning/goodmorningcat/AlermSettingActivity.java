@@ -1,5 +1,6 @@
 package com.cat.morning.goodmorningcat;
 
+import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.database.Cursor;
@@ -8,6 +9,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
@@ -167,7 +170,7 @@ public class AlermSettingActivity extends AppCompatActivity {
         /*
          * 音量 TODO: とりあえず簡単に実装。
          */
-        Spinner spVolum = (Spinner)findViewById(R.id.spVolum);
+        final Spinner spVolum = (Spinner)findViewById(R.id.spVolum);
 
         ArrayAdapter<String> volumeAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
         volumeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -274,49 +277,82 @@ public class AlermSettingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                // DBに登録する
                 String tvTime = ((TextView) findViewById(R.id.tvTime)).getText().toString();
-                SQLiteDatabase db = MyDBHelper.getInstance(AlermSettingActivity.this).getWritableDatabase();
+                if (tvTime.equals("-- : --")) {
+                    final Dialog dialog = new Dialog(AlermSettingActivity.this);
+                    // タイトル非表示
+                    dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
-                if (spinnerVolumeValue != "") {
-                    switch (spinnerVolumeValue) {
-                        case "小さい": //on
-                            setVolume = 0;
-                            break;
-                        case "普通":
-                            setVolume = 3;
-                            break;
-                        case "大きい":
-                            setVolume = 6;
-                            break;
-                    }
-                }
+                    // フルスクリーン
+                    dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
+                    dialog.setContentView(R.layout.dialog_cannot_regist);
 
-                Log.d("test update time", tvTime);
-                Log.d("test update volume", Integer.toString(setVolume));
-                Log.d("test update vibrate", Integer.toString(setVibrator));
-                Log.d("test update manner", Integer.toString(setManner));
-
-                if (updateAlarm) {
-                    db.execSQL("UPDATE alert_set_table SET time = ?, volume = ?, vibrate = ?, manner = ?, status = ? WHERE id = ?",
-                            new String[]{tvTime, Integer.toString(setVolume), Integer.toString(setVibrator), Integer.toString(setManner), Integer.toString(status), Integer.toString(id)});
+                    // OK ボタンのリスナ
+                    dialog.findViewById(R.id.bOk).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
+                    dialog.show();
                 } else {
-                    db.execSQL("INSERT INTO alert_set_table (week, time, volume, vibrate, manner) VALUES ('月曜',?, ?, ?, ?)",
-                            new String[]{tvTime, Integer.toString(setVolume), Integer.toString(setVibrator), Integer.toString(setManner)});
+
+                    // DBに登録する
+                    SQLiteDatabase db = MyDBHelper.getInstance(AlermSettingActivity.this).getWritableDatabase();
+
+                    if (spinnerVolumeValue != "") {
+                        switch (spinnerVolumeValue) {
+                            case "小さい": //on
+                                setVolume = 0;
+                                break;
+                            case "普通":
+                                setVolume = 3;
+                                break;
+                            case "大きい":
+                                setVolume = 6;
+                                break;
+                        }
+                    }
+
+                    Log.d("test update time", tvTime);
+                    Log.d("test update volume", Integer.toString(setVolume));
+                    Log.d("test update vibrate", Integer.toString(setVibrator));
+                    Log.d("test update manner", Integer.toString(setManner));
+
+                    if (updateAlarm) {
+                        db.execSQL("UPDATE alert_set_table SET time = ?, volume = ?, vibrate = ?, manner = ?, status = ? WHERE id = ?",
+                                new String[]{tvTime, Integer.toString(setVolume), Integer.toString(setVibrator), Integer.toString(setManner), Integer.toString(status), Integer.toString(id)});
+                    } else {
+                        db.execSQL("INSERT INTO alert_set_table (week, time, volume, vibrate, manner) VALUES ('月曜',?, ?, ?, ?)",
+                                new String[]{tvTime, Integer.toString(setVolume), Integer.toString(setVibrator), Integer.toString(setManner)});
+                    }
+                    // 曜日は今後のために残しておく
+
+                    /*  アラート登録時はONの状態なので、アラートをセットする。 */
+                    // セットする時刻取得
+                    String[] time = tvTime.split(":", 0);
+
+                    AlermSettingUtils.setAlerm(AlermSettingActivity.this, db, time);
+
+                    // setしたあとはホームに飛ばす
+                    Intent homeIntent = new Intent(AlermSettingActivity.this, MainActivity.class);
+                    startActivityForResult(homeIntent, 0);
+                    AlermSettingActivity.this.finish(); // Activity終了
                 }
-                // 曜日は今後のために残しておく
 
-                /*  アラート登録時はONの状態なので、アラートをセットする。 */
-                // セットする時刻取得
-                String[] time = tvTime.split(":", 0);
+            }
+        });
 
-                AlermSettingUtils.setAlerm(AlermSettingActivity.this, db, time);
-
-                // setしたあとはホームに飛ばす
-                Intent homeIntent = new Intent(AlermSettingActivity.this, MainActivity.class);
-                startActivityForResult(homeIntent, 0);
-                AlermSettingActivity.this.finish(); // Activity終了
-
+        /*
+         * Clearボタン
+         */
+        findViewById(R.id.tvClear).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tvTime.setText("-- : --");
+                spVolum.setSelection(1);
+                swVibrator.setChecked(true);
+                swManner.setChecked(true);
             }
         });
 

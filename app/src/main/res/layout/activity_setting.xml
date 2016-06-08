@@ -16,6 +16,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"
             android:src="@drawable/nav_top"/>
 
         <ImageView
@@ -23,6 +25,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"
             android:src="@drawable/nav_time_set"/>
 
         <ImageView
@@ -30,6 +34,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"
             android:src="@drawable/nav_cat_list"/>
 
         <ImageView
@@ -37,6 +43,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"
             android:src="@drawable/on"/>
 
     </LinearLayout>
@@ -79,6 +87,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:src="@drawable/ad_bg"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"/>

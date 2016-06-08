@@ -2,6 +2,7 @@
 <resources>
     <color name="light_green">#b0d530</color>
     <color name="black">#de000000</color>
+    <color name="orange">#f59b23</color>
 
     <color name="transparent">#00000000</color>
     <color name="colorPrimary">#696969</color>

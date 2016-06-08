@@ -21,7 +21,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -30,7 +29,10 @@ import android.widget.TextView;
 import com.cat.morning.goodmorningcat.util.AlermSettingUtils;
 import java.util.Calendar;
 import io.repro.android.Repro;
+
+import com.cat.morning.goodmorningcat.util.MyApplication;
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 
 public class MainActivity extends AppCompatActivity {
@@ -67,11 +69,14 @@ public class MainActivity extends AppCompatActivity {
         Repro.setup("c5de83ed-5b81-42f3-83c8-bc92410147c0");
         Repro.enablePushNotification("662649025058");
 
+        Boolean isTablet = MyApplication.isTablet(this);
+
         // Google AdMob
         AdView mAdView = (AdView) findViewById(R.id.adView);
+
         AdRequest adRequest = new AdRequest.Builder()
-                                .addTestDevice("B849BBBCEBFDC32DCFC71B0DED769198")
-                                .build();
+//                                .addTestDevice("B849BBBCEBFDC32DCFC71B0DED769198")
+                .build();
         mAdView.loadAd(adRequest);
 
 
@@ -245,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
                         dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
                         // フルスクリーン
-                        dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
+//                        dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
                         dialog.setContentView(R.layout.dialog_alarm_delete);
 
                         // OK ボタンのリスナ
